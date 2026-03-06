@@ -1,0 +1,39 @@
+import { createRouter, createWebHashHistory } from 'vue-router'
+
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: () => import('../pages/HomePage.vue'),
+    },
+    {
+      path: '/blog',
+      name: 'blog',
+      component: () => import('../pages/BlogPage.vue'),
+    },
+    {
+      path: '/blog/:slug',
+      name: 'blog-post',
+      component: () => import('../pages/BlogPost.vue'),
+    },
+    {
+      path: '/demos',
+      name: 'demos',
+      component: () => import('../pages/DemoPage.vue'),
+    },
+    {
+      path: '/hangzhou',
+      name: 'hangzhou',
+      component: () => import('../pages/HangzhouPage.vue'),
+    },
+  ],
+  scrollBehavior(to, _from, savedPosition) {
+    if (savedPosition) return savedPosition
+    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    return { top: 0 }
+  },
+})
+
+export default router
