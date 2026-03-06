@@ -1,65 +1,117 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 
 const visible = ref(false)
 onMounted(() => {
   visible.value = true
 })
 
-interface Spot {
-  title: string
-  subtitle: string
-  desc: string
-  image: string
-  tags: string[]
-}
-
-const spots: Spot[] = [
+const scenes = [
   {
-    title: '西湖',
-    subtitle: 'West Lake · 世界文化遗产',
-    desc: '西湖位于杭州市西部，三面环山，面积约 6.39 平方公里。以"一山、二塔、三岛、三堤、五湖"闻名于世，自古便有"上有天堂，下有苏杭"的美誉。断桥残雪、苏堤春晓、三潭印月等西湖十景更是名扬天下。',
-    image: 'https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=800&q=80',
-    tags: ['世界遗产', '十景', '湖光山色'],
+    name: '苏堤春晓', icon: '🌸', season: '春', best: '3-4月清晨',
+    location: '西湖西侧，南山路至北山路',
+    desc: '苏堤全长 2.8 公里，由北宋大文豪苏轼任杭州知州时疏浚西湖、以湖泥堆筑而成。堤上遍植桃柳，春日清晨晨雾未散时漫步其间，桃红柳绿交相辉映，六桥烟柳笼纱，湖光山色如诗如画。苏堤春晓自南宋起便位列西湖十景之首，千百年来无数文人墨客为之倾倒。',
+    poem: '苏堤景致六条桥，一株杨柳一株桃。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,west-lake,sudi',
   },
   {
-    title: '灵隐寺',
-    subtitle: 'Lingyin Temple · 千年古刹',
-    desc: '灵隐寺始建于东晋咸和元年（326年），距今已有近 1700 年历史，是杭州最早的名刹。寺院深藏于西湖西北的飞来峰下，殿宇恢弘，古木参天，飞来峰上数百尊石窟造像更是国宝级文物。',
-    image: 'https://images.unsplash.com/photo-1591871937573-74dbba515c4c?w=800&q=80',
-    tags: ['古寺', '飞来峰', '佛教文化'],
+    name: '断桥残雪', icon: '❄️', season: '冬', best: '12-2月雪后初晴',
+    location: '白堤东端，北山路口',
+    desc: '断桥是西湖上最负盛名的一座桥，因《白蛇传》中许仙与白娘子在此相遇的爱情传说而家喻户晓。每当冬日大雪初霁，桥的阳面冰雪消融、阴面残雪如霜，远望去桥面似断非断，\u201c断桥残雪\u201d的意境便由此而来。伫立桥上极目远眺，银装素裹的湖山一览无余。',
+    poem: '断桥荒藓涩，空院落花深。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,broken-bridge,snow',
   },
   {
-    title: '千岛湖',
-    subtitle: 'Qiandao Lake · 天下第一秀水',
-    desc: '千岛湖位于杭州淳安县，水域面积 573 平方公里，拥有 1078 个岛屿。湖水清澈见底，能见度可达 12 米，被誉为"天下第一秀水"。四周群山环绕，一年四季景色各异，是绝佳的生态旅游胜地。',
-    image: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=800&q=80',
-    tags: ['千岛', '秀水', '生态旅游'],
+    name: '曲院风荷', icon: '🪷', season: '夏', best: '6-8月盛夏',
+    location: '西湖西北角，岳庙前',
+    desc: '曲院原为南宋朝廷酿造官酒的作坊，因靠近荷花池而得名。如今这里是西湖最大的赏荷胜地，占地约 430 亩。盛夏时节，满塘荷花竞相绽放，红莲、白莲、重台莲、洒金莲等数十个品种争奇斗艳，微风拂过清香四溢，漫步曲桥之上仿佛置身画中。',
+    poem: '接天莲叶无穷碧，映日荷花别样红。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,lotus,west-lake',
   },
   {
-    title: '西溪湿地',
-    subtitle: 'Xixi Wetland · 城市湿地公园',
-    desc: '西溪湿地是中国首个国家湿地公园，总面积约 11.5 平方公里。这里河渠纵横、芦花飞雪，集城市湿地、农耕湿地、文化湿地于一体，有"杭州之肾"的美誉。秋天的芦花与火柿映衬，美不胜收。',
-    image: 'https://images.unsplash.com/photo-1580130379624-3a069adbffc5?w=800&q=80',
-    tags: ['湿地', '芦花', '生态'],
+    name: '平湖秋月', icon: '🌙', season: '秋', best: '中秋月夜',
+    location: '白堤西端，孤山南麓',
+    desc: '平湖秋月三面临水，背倚孤山，是西湖赏月的绝佳之地。每逢仲秋之夜，皓月当空、清风徐来，湖面波光粼粼宛如铺洒了一层碎银。此处视野开阔，远山近水尽收眼底，天上一轮明月与湖中倒影遥相呼应，天水一色、万籁俱寂，令人心旷神怡。',
+    poem: '万顷湖平长似镜，四时月好最宜秋。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,moon,west-lake',
   },
   {
-    title: '钱塘江大潮',
-    subtitle: 'Qiantang Tidal Bore · 天下奇观',
-    desc: '钱塘江大潮被誉为"天下第一潮"，每年农历八月十八前后最为壮观。潮头可高达数米，声如雷鸣，气势磅礴。观潮地点以海宁盐官最为著名，千百年来吸引无数文人墨客前来观赏。',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
-    tags: ['大潮', '奇观', '钱塘江'],
+    name: '三潭印月', icon: '🏮', season: '秋', best: '中秋月夜',
+    location: '西湖中央小瀛洲岛',
+    desc: '三潭印月是西湖中最大的岛屿，岛内湖中有岛、岛中有湖，布局精巧如同中国园林的缩影。湖面上三座瓶形石塔始建于北宋，高 2 米，中空有五个圆孔。中秋之夜塔内点烛、口蒙薄纱，烛光与月光交映在湖面上，形成\u201c天上月一轮，湖中影成三\u201d的奇景，也是一元纸币背面的经典图案。',
+    poem: '月光映潭潭映月，下天上天天与水。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,three-pools-mirroring-the-moon',
   },
   {
-    title: '龙井茶园',
-    subtitle: 'Longjing Tea · 中国十大名茶',
-    desc: '龙井茶产于杭州西湖龙井村一带，以色绿、香郁、味甘、形美四绝著称，位列中国十大名茶之首。春天的茶园层层叠叠、满目翠绿，采茶时节更能体验亲手炒茶的乐趣，品一杯正宗明前龙井。',
-    image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?w=800&q=80',
-    tags: ['龙井', '名茶', '茶文化'],
+    name: '花港观鱼', icon: '🐟', season: '四季', best: '春秋两季',
+    location: '苏堤南段西侧',
+    desc: '花港观鱼因有一条花溪从花家山流入西湖而得名。园内亭台楼阁掩映于古木花丛之间，牡丹园里种植了数百株名品牡丹。最引人注目的是红鱼池——数千尾锦鲤在池中游弋，红、金、白各色交织，游客投食时鱼群翻涌聚拢，一片生机盎然的景象。',
+    poem: '花家山下流花港，花著鱼身鱼嘬花。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,fish,pond,garden',
+  },
+  {
+    name: '柳浪闻莺', icon: '🐦', season: '春', best: '3-5月',
+    location: '西湖东南岸，南山路',
+    desc: '柳浪闻莺在南宋时曾是皇家御花园\u201c聚景园\u201d的所在地。如今这里是杭州最大的沿湖公园，千余株垂柳沿湖岸依次排列。春天柳枝吐翠时，微风拂过杨柳随风飘舞如绿浪翻涌；林间黄莺穿梭啼啭、清脆悦耳，鸟鸣与远处湖波和鸣，是西湖边最富诗情画意的角落。',
+    poem: '柳荫深霭玉壶清，碧浪摇空舞袖轻。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,willow,west-lake',
+  },
+  {
+    name: '雷峰夕照', icon: '🌅', season: '四季', best: '傍晚日落时分',
+    location: '西湖南岸夕照山上',
+    desc: '雷峰塔始建于公元 977 年（北宋太平兴国二年），因《白蛇传》中法海将白娘子镇于塔下的故事而名满天下。旧塔于 1924 年倒塌，2002 年在原址重建。每当夕阳西下，漫天晚霞映照金色塔身，宝塔的剪影倒映在粼粼波光之中，与远处保俶塔遥相对望，构成\u201c一湖映双塔、南北相对峙\u201d的绝美画面。',
+    poem: '雷峰如老衲，保俶如美人。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,leifeng-pagoda,sunset',
+  },
+  {
+    name: '双峰插云', icon: '⛰️', season: '四季', best: '雨后云雾天',
+    location: '南高峰与北高峰',
+    desc: '南高峰海拔 257 米，北高峰海拔 355 米，两峰南北对峙、遥相呼应，是西湖群山中最具代表性的山峰。每逢春秋之际或雨后初晴，云雾从山谷间升腾缭绕，两座山峰时隐时现于飘渺云海之中，峰尖若隐若现犹如插入云霄，恍若仙境。登上峰顶则可俯瞰整个西湖全景。',
+    poem: '南北高峰高插天，两峰相对不相连。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,peak,cloud,mountain',
+  },
+  {
+    name: '南屏晚钟', icon: '🔔', season: '四季', best: '傍晚时分',
+    location: '西湖南岸南屏山下净慈寺',
+    desc: '净慈寺始建于五代后周显德元年（954 年），与灵隐寺并称为杭州两大古刹。寺内铜钟重达一万余斤，钟声浑厚悠扬。每当暮色四合、夕阳衔山之际，悠长的钟声从南屏山间传出，在群山与湖面之间回荡不绝。济公和尚的传说也为这座古寺增添了几分传奇色彩。',
+    poem: '夜气滃南屏，轻岚薄如纸。钟声出上方，夜渡空江水。',
+    image: 'https://source.unsplash.com/1200x800/?hangzhou,temple,bell,evening',
   },
 ]
 
-const activeSpot = ref<number | null>(null)
+const seasonCards = [
+  {
+    key: 'spring',
+    label: '🌸 春赏桃花',
+    image: 'https://source.unsplash.com/1400x900/?hangzhou,peach-blossom,spring',
+  },
+  {
+    key: 'summer',
+    label: '🪷 夏观荷花',
+    image: 'https://source.unsplash.com/1400x900/?hangzhou,lotus,summer',
+  },
+  {
+    key: 'autumn',
+    label: '🍂 秋品桂香',
+    image: 'https://source.unsplash.com/1400x900/?hangzhou,osmanthus,autumn',
+  },
+  {
+    key: 'winter',
+    label: '❄️ 冬看断桥',
+    image: 'https://source.unsplash.com/1400x900/?hangzhou,broken-bridge,winter',
+  },
+]
+
+const fallbackSeasonCard = {
+  key: 'spring',
+  label: '🌸 春赏桃花',
+  image: 'https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=1400&q=80',
+}
+
+const activeSeason = ref(seasonCards[0]?.key ?? fallbackSeasonCard.key)
+const activeSeasonCard = computed(
+  () => seasonCards.find((item) => item.key === activeSeason.value) ?? seasonCards[0] ?? fallbackSeasonCard,
+)
 </script>
 
 <template>
@@ -113,87 +165,31 @@ const activeSpot = ref<number | null>(null)
         <div class="section-header">
           <span class="section-tag">核心景区</span>
           <h2>西湖十景</h2>
-          <p>自南宋以来，西湖十景就是杭州最具代表性的文化名片</p>
+          <p>自南宋以来，西湖十景就是杭州最具代表性的文化名片，每一景都承载着千年的诗意与传说</p>
         </div>
         <div class="xihu-grid">
-          <div class="xihu-card" v-for="(scene, i) in [
-            { name: '苏堤春晓', icon: '🌸', desc: '春日苏堤，桃红柳绿，晨光中漫步如画' },
-            { name: '断桥残雪', icon: '❄️', desc: '冬日断桥，白雪覆盖，如同一幅水墨画卷' },
-            { name: '曲院风荷', icon: '🪷', desc: '盛夏荷花满塘，清风徐来，荷香四溢' },
-            { name: '平湖秋月', icon: '🌙', desc: '秋夜湖面如镜，月光洒落，宁静致远' },
-            { name: '三潭印月', icon: '🏮', desc: '三座石塔矗立湖中，月夜映出无数光影' },
-            { name: '花港观鱼', icon: '🐟', desc: '花木扶疏，锦鲤成群，一幅生机盎然的画面' },
-            { name: '柳浪闻莺', icon: '🐦', desc: '杨柳依依，莺歌燕舞，春天最动人的声音' },
-            { name: '雷峰夕照', icon: '🌅', desc: '夕阳映照雷峰塔，金光万道，壮丽无比' },
-            { name: '双峰插云', icon: '⛰️', desc: '南北高峰遥相对峙，云雾缭绕如仙境' },
-            { name: '南屏晚钟', icon: '🔔', desc: '暮色中净慈寺钟声回荡，余音绕湖不绝' },
-          ]" :key="i">
-            <span class="xihu-icon">{{ scene.icon }}</span>
-            <h3>{{ scene.name }}</h3>
-            <p>{{ scene.desc }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Scenic Spots -->
-    <section class="spots-section">
-      <div class="section-inner">
-        <div class="section-header">
-          <span class="section-tag">精选景点</span>
-          <h2>不可错过的杭州美景</h2>
-          <p>从千年古刹到秀美湖光，每一处都值得细细品味</p>
-        </div>
-        <div class="spots-list">
-          <div
-            class="spot-card"
-            v-for="(spot, i) in spots"
-            :key="i"
-            :class="{ expanded: activeSpot === i }"
-            @click="activeSpot = activeSpot === i ? null : i"
-          >
-            <div class="spot-img-wrap">
-              <img :src="spot.image" :alt="spot.title" loading="lazy" />
-              <div class="spot-img-overlay" />
+          <div class="xihu-card" v-for="(scene, i) in scenes" :key="i">
+            <div class="xihu-left">
+              <span class="xihu-season">{{ scene.season }}</span>
+              <span class="xihu-best-short">{{ scene.best }}</span>
             </div>
-            <div class="spot-info">
-              <div class="spot-top">
-                <span class="spot-number">{{ String(i + 1).padStart(2, '0') }}</span>
-                <div>
-                  <h3>{{ spot.title }}</h3>
-                  <span class="spot-subtitle">{{ spot.subtitle }}</span>
+            <div class="xihu-right">
+              <div class="xihu-top">
+                <h3>{{ scene.name }}</h3>
+                <div class="xihu-meta">
+                  <span class="xihu-best">{{ scene.best }}</span>
+                  <span class="xihu-location">{{ scene.location }}</span>
                 </div>
               </div>
-              <p class="spot-desc">{{ spot.desc }}</p>
-              <div class="spot-tags">
-                <span v-for="tag in spot.tags" :key="tag" class="tag">{{ tag }}</span>
+              <div class="xihu-image-wrap">
+                <img
+                  class="xihu-image"
+                  :src="scene.image || 'https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=1200&q=80'"
+                  :alt="`${scene.name}相关图片`"
+                />
               </div>
+              <p class="xihu-poem">{{ scene.poem }}</p>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Culture -->
-    <section class="culture-section">
-      <div class="section-inner">
-        <div class="section-header">
-          <span class="section-tag">文化名片</span>
-          <h2>杭州的味道</h2>
-          <p>一座城市的灵魂，藏在它的饮食与文化之中</p>
-        </div>
-        <div class="culture-grid">
-          <div class="culture-card" v-for="(item, i) in [
-            { icon: '🍵', title: '龙井茶', desc: '色绿、香郁、味甘、形美，中国十大名茶之首' },
-            { icon: '🥟', title: '小笼包', desc: '皮薄馅嫩、汤汁鲜美，杭州早点的经典代表' },
-            { icon: '🐟', title: '西湖醋鱼', desc: '选用西湖草鱼，肉质鲜嫩，酸甜适口' },
-            { icon: '🥩', title: '东坡肉', desc: '以苏东坡命名，肥而不腻、酥烂入味' },
-            { icon: '🎭', title: '越剧', desc: '中国第二大剧种，唱腔柔美婉转、细腻动人' },
-            { icon: '☂️', title: '油纸伞', desc: '千年传承的手工技艺，伞面绘有精美图案' },
-          ]" :key="i">
-            <span class="culture-icon">{{ item.icon }}</span>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.desc }}</p>
           </div>
         </div>
       </div>
@@ -205,10 +201,23 @@ const activeSpot = ref<number | null>(null)
         <h2>来杭州，遇见最美的风景</h2>
         <p>无论春夏秋冬，杭州都有不同的美等你来发现</p>
         <div class="cta-seasons">
-          <span>🌸 春赏桃花</span>
-          <span>🪷 夏观荷花</span>
-          <span>🍂 秋品桂香</span>
-          <span>❄️ 冬看断桥</span>
+          <button
+            v-for="item in seasonCards"
+            :key="item.key"
+            class="cta-season-btn"
+            :class="{ active: item.key === activeSeason }"
+            type="button"
+            @click="activeSeason = item.key"
+          >
+            {{ item.label }}
+          </button>
+        </div>
+        <div class="cta-image-wrap">
+          <img
+            class="cta-image"
+            :src="activeSeasonCard.image"
+            :alt="`${activeSeasonCard.label}相关图片`"
+          />
         </div>
       </div>
     </section>
@@ -401,209 +410,122 @@ const activeSpot = ref<number | null>(null)
 
 .xihu-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
 }
 
 .xihu-card {
+  display: flex;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px 16px;
-  text-align: center;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+  transition: all 0.35s ease;
   cursor: default;
 }
 
 .xihu-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   border-color: var(--primary);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg, 0 8px 30px rgba(0,0,0,0.12));
 }
 
-.xihu-icon {
-  font-size: 2rem;
-  display: block;
-  margin-bottom: 12px;
-}
-
-.xihu-card h3 {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.xihu-card p {
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-/* ===== Spots Section ===== */
-.spots-section {
-  padding: 100px 0;
-  background: var(--bg-card);
-}
-
-.spots-list {
+.xihu-left {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-.spot-card {
-  display: flex;
-  background: var(--bg-dark);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.35s ease;
-}
-
-.spot-card:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow-lg);
-}
-
-.spot-img-wrap {
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 32px 24px;
+  min-width: 100px;
+  background: linear-gradient(160deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.12) 100%);
+  border-right: 1px solid var(--border);
   position: relative;
-  width: 320px;
-  min-width: 320px;
-  min-height: 220px;
-  overflow: hidden;
 }
 
-.spot-img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.spot-card:hover .spot-img-wrap img {
-  transform: scale(1.06);
-}
-
-.spot-img-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent 60%, var(--bg-dark) 100%);
-}
-
-.spot-info {
-  flex: 1;
-  padding: 28px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.spot-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.spot-number {
-  font-size: 2rem;
+.xihu-season {
+  font-size: 2.2rem;
   font-weight: 900;
   background: var(--gradient-1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   line-height: 1;
+  letter-spacing: 2px;
 }
 
-.spot-top h3 {
-  font-size: 1.4rem;
+.xihu-best-short {
+  font-size: 0.7rem;
+  color: var(--text-muted, #999);
+  text-align: center;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.xihu-right {
+  flex: 1;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.xihu-top h3 {
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--text-primary);
-  line-height: 1.2;
+  margin-bottom: 6px;
 }
 
-.spot-subtitle {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-  display: block;
-}
-
-.spot-desc {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.8;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease, opacity 0.3s ease;
-  opacity: 0;
-}
-
-.spot-card.expanded .spot-desc {
-  max-height: 200px;
-  opacity: 1;
-}
-
-.spot-tags {
+.xihu-meta {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
-.tag {
-  padding: 4px 12px;
-  background: var(--tag-bg);
-  border: 1px solid var(--tag-border);
-  border-radius: 50px;
+.xihu-best,
+.xihu-location {
   font-size: 0.75rem;
-  color: var(--primary-light);
-  font-weight: 500;
+  color: var(--text-muted, #999);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-/* ===== Culture Section ===== */
-.culture-section {
-  padding: 100px 0;
+.xihu-best::before {
+  content: '\1F551';
+  font-size: 0.7rem;
 }
 
-.culture-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+.xihu-location::before {
+  content: '\1F4CD';
+  font-size: 0.7rem;
 }
 
-.culture-card {
-  background: var(--bg-card);
+.xihu-image-wrap {
+  width: 100%;
+  height: 190px;
+  border-radius: 12px;
+  overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 32px 24px;
-  text-align: center;
-  transition: all 0.3s ease;
 }
 
-.culture-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--primary);
-  box-shadow: var(--shadow-md);
-}
-
-.culture-icon {
-  font-size: 2.5rem;
+.xihu-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  margin-bottom: 16px;
 }
 
-.culture-card h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.culture-card p {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
+.xihu-poem {
+  font-size: 0.8rem;
+  color: var(--primary-light);
+  font-style: italic;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
   line-height: 1.6;
+  opacity: 0.85;
 }
 
 /* ===== CTA Section ===== */
@@ -635,9 +557,10 @@ const activeSpot = ref<number | null>(null)
   justify-content: center;
   gap: 24px;
   flex-wrap: wrap;
+  margin-bottom: 24px;
 }
 
-.cta-seasons span {
+.cta-season-btn {
   padding: 12px 28px;
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -646,18 +569,42 @@ const activeSpot = ref<number | null>(null)
   color: var(--text-primary);
   font-weight: 600;
   transition: all 0.3s;
+  cursor: pointer;
 }
 
-.cta-seasons span:hover {
+.cta-season-btn:hover {
   border-color: var(--primary);
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
 
+.cta-season-btn.active {
+  color: #fff;
+  border-color: transparent;
+  background: var(--gradient-1);
+}
+
+.cta-image-wrap {
+  margin: 0 auto;
+  max-width: 920px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg, 0 8px 30px rgba(0, 0, 0, 0.12));
+}
+
+.cta-image {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 1024px) {
   .xihu-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
 
@@ -684,46 +631,44 @@ const activeSpot = ref<number | null>(null)
     font-size: 1.5rem;
   }
 
-  .xihu-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .spot-card {
+  .xihu-card {
     flex-direction: column;
   }
 
-  .spot-img-wrap {
-    width: 100%;
+  .xihu-left {
+    flex-direction: row;
+    gap: 12px;
+    padding: 14px 20px;
     min-width: unset;
-    min-height: 180px;
-    max-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
   }
 
-  .spot-img-overlay {
-    background: linear-gradient(180deg, transparent 40%, var(--bg-dark) 100%);
+  .xihu-season {
+    font-size: 1.6rem;
   }
 
-  .culture-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .xihu-right {
+    padding: 20px;
   }
 
   .cta-seasons {
     gap: 12px;
   }
 
-  .cta-seasons span {
+  .cta-season-btn {
     padding: 10px 20px;
     font-size: 0.85rem;
+  }
+
+  .cta-image {
+    height: 320px;
   }
 }
 
 @media (max-width: 480px) {
-  .xihu-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .culture-grid {
-    grid-template-columns: 1fr;
+  .cta-image {
+    height: 240px;
   }
 }
 </style>

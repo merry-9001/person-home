@@ -33,6 +33,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
           <RouterLink to="/blog" @click="closeMenu">博客</RouterLink>
           <RouterLink to="/demos" @click="closeMenu">Demo</RouterLink>
           <RouterLink to="/hangzhou" @click="closeMenu">杭州</RouterLink>
+          <RouterLink to="/hangzhou" @click="closeMenu">杭州</RouterLink>
         </nav>
         <button class="theme-toggle" @click="toggleTheme" :aria-label="theme === 'dark' ? '切换到白天模式' : '切换到黑夜模式'">
           <Transition name="icon-fade" mode="out-in">
