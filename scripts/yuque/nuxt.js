@@ -102,7 +102,7 @@ module.exports = async function (post) {
   const parseRet = parseMatter(post.body)
   const { body, ...data } = parseRet
   const { title, slug: urlname, created_at, description, cover } = post
-  const raw = formatRaw(body)
+  const raw = await formatRaw(body)
   const date = data.date || formatDate(created_at)
   const tags = post.tags?.map(item => item.title) || []
   const categories = data.categories || []

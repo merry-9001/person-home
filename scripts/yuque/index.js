@@ -10,32 +10,32 @@ const image_queue = []
 let index = 0
 let downloaded = 0
 
-// function download() {
-//   if (index >= image_queue.length) {
-//     return
-//   }
-//   const { img_src, down_url } = image_queue[index++]
-//   needle
-//     .get(img_src, { headers: { Connection: 'Keep-Alive' } })
-//     .pipe(fs.createWriteStream(down_url))
-//     .on('finish', (err) => {
-//       if (err) {
-//         process.stdout.write('\n')
-//         console.error('failed to download', img_src, err)
-//       } else {
-//         downloaded++
-//         process.stdout.write(
-//           `downloaded ${downloaded}, total ${image_queue.length}\r`
-//         )
-//       }
-//       download()
-//     })
-// }
-// setTimeout(() => {
-//   for (let i = 0; i < 10; i++) {
-//     download()
-//   }
-// }, 1000 * 5)
+function download() {
+  if (index >= image_queue.length) {
+    return
+  }
+  const { img_src, down_url } = image_queue[index++]
+  needle
+    .get(img_src, { headers: { Connection: 'Keep-Alive' } })
+    .pipe(fs.createWriteStream(down_url))
+    .on('finish', (err) => {
+      if (err) {
+        process.stdout.write('\n')
+        console.error('failed to download', img_src, err)
+      } else {
+        downloaded++
+        process.stdout.write(
+          `downloaded ${downloaded}, total ${image_queue.length}\r`
+        )
+      }
+      download()
+    })
+}
+setTimeout(() => {
+  for (let i = 0; i < 10; i++) {
+    download()
+  }
+}, 1000 * 5)
 
 function formatImg(text, img_folder) {
   let img_src_reg = /(?<=\[.*\]\()http.+\.(jpg|gif|png|webp).*(?=\))/
@@ -66,22 +66,23 @@ function formatLink(text) {
 
 module.exports = async function (post) {
   let text = await HexoAdapter(post)
+  console.log(text)
+  if (!/(?<=\[.*\]\()http.+\.(jpg|gif|png|webp).*(?=\))/.test(text)) {
+    return text
+  }
 
-  // if (!/(?<=\[.*\]\()http.+\.(jpg|gif|png|webp).*(?=\))/.test(text)) {
-  //   return text
-  // }
+  let img_dir_name = text.match(/(?<=urlname:).*/)[0].trim()
 
-  // let img_dir_name = text.match(/(?<=urlname:).*/)[0].trim()
+  // 下载后存放图片的地址
+  let img_folder = path.join(
+    'public/articles',
+    img_dir_name
+  )
+  mkdirp.sync(img_folder)
 
-  // // 下载后存放图片的地址
-  // let img_folder = path.join(
-  //   'public/articles',
-  //   img_dir_name
-  // )
-  // mkdirp.sync(img_folder)
+  // 图片处理
+  text = formatImg(text, img_folder)
 
-  // // 图片处理
-  // text = formatImg(text, img_folder)
 
   return text
 }
