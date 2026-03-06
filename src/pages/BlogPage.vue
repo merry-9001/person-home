@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 interface PostMeta {
@@ -13,6 +13,7 @@ interface PostMeta {
 const router = useRouter()
 const posts = ref<PostMeta[]>([])
 const visible = ref(false)
+const searchKeyword = ref('')
 
 function parseFrontmatter(raw: string): { meta: Record<string, any>; content: string } {
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)
@@ -77,6 +78,18 @@ onMounted(async () => {
 function goPost(slug: string) {
   router.push({ name: 'blog-post', params: { slug } })
 }
+
+const normalizedKeyword = computed(() => searchKeyword.value.trim().toLowerCase())
+
+const filteredPosts = computed(() => {
+  const keyword = normalizedKeyword.value
+  if (!keyword) return posts.value
+
+  return posts.value.filter((post) => {
+    const searchText = [post.title, post.summary, post.date, ...post.tags].join(' ').toLowerCase()
+    return searchText.includes(keyword)
+  })
+})
 </script>
 
 <template>
@@ -87,9 +100,18 @@ function goPost(slug: string) {
         <h1>我的文章</h1>
         <p class="subtitle">记录技术探索与思考</p>
       </div>
+      <div class="search-box">
+        <input
+          v-model="searchKeyword"
+          type="text"
+          class="search-input"
+          placeholder="搜索标题、摘要、标签..."
+          aria-label="搜索文章"
+        />
+      </div>
       <div class="posts-list">
         <article
-          v-for="(post, i) in posts"
+          v-for="(post, i) in filteredPosts"
           :key="post.slug"
           class="post-card"
           :style="{ transitionDelay: `${i * 0.1 + 0.2}s` }"
@@ -104,8 +126,11 @@ function goPost(slug: string) {
           <span class="read-more">阅读全文 →</span>
         </article>
       </div>
-      <div v-if="posts.length === 0 && visible" class="empty">
+      <div v-if="visible && posts.length === 0" class="empty">
         <p>暂无文章，敬请期待...</p>
+      </div>
+      <div v-else-if="visible && filteredPosts.length === 0" class="empty">
+        <p>没有找到匹配的文章</p>
       </div>
     </div>
   </section>
@@ -157,6 +182,31 @@ function goPost(slug: string) {
 .subtitle {
   color: var(--text-muted);
   font-size: 1.05rem;
+}
+
+.search-box {
+  margin-bottom: 24px;
+}
+
+.search-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 .posts-list {

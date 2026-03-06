@@ -46,11 +46,6 @@ const contacts = [
           <p>{{ c.value }}</p>
         </a>
       </div>
-      <div class="cta-box">
-        <h3>有好点子？一起聊聊</h3>
-        <p>我总是对新的机会与合作保持开放，期待你的消息。</p>
-        <a href="mailto:hello@example.com" class="btn btn-primary">发送邮件 ✉️</a>
-      </div>
     </div>
   </section>
 </template>
@@ -165,18 +160,6 @@ const contacts = [
 .contact.visible .cta-box {
   opacity: 1;
   transform: translateY(0);
-}
-
-.cta-box h3 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.cta-box p {
-  color: var(--text-secondary);
-  margin-bottom: 28px;
-  font-size: 1rem;
 }
 
 .btn-primary {

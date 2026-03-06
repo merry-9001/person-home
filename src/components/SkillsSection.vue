@@ -19,46 +19,21 @@ onUnmounted(() => window.removeEventListener('scroll', check))
 interface Skill {
   name: string
   icon: string
-  level: number
 }
 
-interface SkillCategory {
-  title: string
-  icon: string
-  skills: Skill[]
-}
-
-const categories: SkillCategory[] = [
-  {
-    title: '前端开发',
-    icon: '🎨',
-    skills: [
-      { name: 'Vue.js', icon: '💚', level: 95 },
-      { name: 'React', icon: '⚛️', level: 85 },
-      { name: 'TypeScript', icon: '🔷', level: 90 },
-      { name: 'CSS / Tailwind', icon: '🎭', level: 90 },
-    ],
-  },
-  {
-    title: '后端开发',
-    icon: '⚙️',
-    skills: [
-      { name: 'Node.js', icon: '🟢', level: 88 },
-      { name: 'Python', icon: '🐍', level: 82 },
-      { name: 'Go', icon: '🔵', level: 75 },
-      { name: 'PostgreSQL', icon: '🐘', level: 80 },
-    ],
-  },
-  {
-    title: '工具 & DevOps',
-    icon: '🛠️',
-    skills: [
-      { name: 'Docker', icon: '🐳', level: 85 },
-      { name: 'Git', icon: '📦', level: 92 },
-      { name: 'Linux', icon: '🐧', level: 80 },
-      { name: 'CI/CD', icon: '🔄', level: 78 },
-    ],
-  },
+const skills: Skill[] = [
+  { name: 'Vue.js', icon: '💚' },
+  { name: 'React', icon: '⚛️' },
+  { name: 'TypeScript', icon: '🔷' },
+  { name: 'CSS / Tailwind', icon: '🎭' },
+  { name: 'Node.js', icon: '🟢' },
+  { name: 'Python', icon: '🐍' },
+  { name: 'Go', icon: '🔵' },
+  { name: 'PostgreSQL', icon: '🐘' },
+  { name: 'Docker', icon: '🐳' },
+  { name: 'Git', icon: '📦' },
+  { name: 'Linux', icon: '🐧' },
+  { name: 'CI/CD', icon: '🔄' },
 ]
 </script>
 
@@ -71,30 +46,14 @@ const categories: SkillCategory[] = [
       </div>
       <div class="skills-grid">
         <div
-          v-for="(cat, ci) in categories"
-          :key="cat.title"
-          class="skill-category"
-          :style="{ transitionDelay: `${ci * 0.15 + 0.2}s` }"
+          v-for="(skill, index) in skills"
+          :key="skill.name"
+          class="skill-item"
+          :style="{ transitionDelay: `${index * 0.06 + 0.2}s` }"
+          :title="skill.name"
+          :aria-label="skill.name"
         >
-          <div class="cat-header">
-            <span class="cat-icon">{{ cat.icon }}</span>
-            <h3>{{ cat.title }}</h3>
-          </div>
-          <div class="skill-list">
-            <div v-for="skill in cat.skills" :key="skill.name" class="skill-item">
-              <div class="skill-info">
-                <span class="skill-icon">{{ skill.icon }}</span>
-                <span class="skill-name">{{ skill.name }}</span>
-                <span class="skill-pct">{{ skill.level }}%</span>
-              </div>
-              <div class="skill-bar">
-                <div
-                  class="skill-fill"
-                  :style="{ width: visible ? `${skill.level}%` : '0%' }"
-                />
-              </div>
-            </div>
-          </div>
+          <span class="skill-icon">{{ skill.icon }}</span>
         </div>
       </div>
     </div>
@@ -145,101 +104,81 @@ const categories: SkillCategory[] = [
 
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-}
-
-.skill-category {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s ease;
-}
-
-.skills.visible .skill-category {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.skill-category:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow-md);
-}
-
-.cat-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-
-.cat-icon {
-  font-size: 1.6rem;
-}
-
-.cat-header h3 {
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-
-.skill-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.skill-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+  gap: 16px;
+  max-width: 780px;
+  margin: 0 auto;
 }
 
 .skill-icon {
-  font-size: 1rem;
+  font-size: 2rem;
+  line-height: 1;
 }
 
-.skill-name {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  flex: 1;
+.skill-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  transition: all 0.6s ease;
 }
 
-.skill-pct {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-weight: 600;
+.skills.visible .skill-item {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
-.skill-bar {
-  height: 6px;
-  background: var(--bar-bg);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.skill-fill {
-  height: 100%;
-  background: var(--gradient-1);
-  border-radius: 3px;
-  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+.skill-item:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px) scale(1.03);
 }
 
 @media (max-width: 1024px) {
   .skills-grid {
-    grid-template-columns: 1fr;
-    max-width: 500px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+    gap: 14px;
+    max-width: 620px;
+  }
+
+  .skill-item {
+    height: 80px;
+  }
+
+  .skill-icon {
+    font-size: 1.8rem;
   }
 }
 
 @media (max-width: 768px) {
   .skills {
     padding: 80px 0;
+  }
+
+  .container {
+    padding: 0 20px;
+  }
+
+  .section-header {
+    margin-bottom: 40px;
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .skill-item {
+    height: 72px;
+  }
+
+  .skill-icon {
+    font-size: 1.6rem;
   }
 }
 </style>

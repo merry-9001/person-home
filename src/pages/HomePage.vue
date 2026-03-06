@@ -8,8 +8,8 @@ import ContactSection from '../components/ContactSection.vue'
 
 <template>
   <HeroSection />
-  <AboutSection />
   <SkillsSection />
   <ProjectsSection />
+  <AboutSection />
   <ContactSection />
 </template>

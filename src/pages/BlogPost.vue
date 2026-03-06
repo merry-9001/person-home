@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MarkdownIt from 'markdown-it'
 
@@ -18,8 +18,49 @@ const tags = ref<string[]>([])
 const htmlContent = ref('')
 const visible = ref(false)
 const notFound = ref(false)
+const tocItems = ref<Array<{ id: string; text: string; level: number }>>([])
 
 const slug = computed(() => route.params.slug as string)
+
+function slugifyHeading(text: string) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\u4e00-\u9fa5\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+}
+
+function renderMarkdownWithToc(content: string) {
+  const tokens = md.parse(content, {})
+  const nextToc: Array<{ id: string; text: string; level: number }> = []
+  const slugCount = new Map<string, number>()
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i]
+    if (!token) continue
+    if (token.type !== 'heading_open') continue
+
+    const level = Number(token.tag.replace('h', ''))
+    const inlineToken = tokens[i + 1]
+    const text = inlineToken?.type === 'inline' ? inlineToken.content.trim() : ''
+    if (!text) continue
+
+    const base = slugifyHeading(text) || `section-${nextToc.length + 1}`
+    const current = slugCount.get(base) ?? 0
+    slugCount.set(base, current + 1)
+    const id = current === 0 ? base : `${base}-${current + 1}`
+
+    token.attrSet('id', id)
+
+    if (level >= 1 && level <= 3) {
+      nextToc.push({ id, text, level })
+    }
+  }
+
+  tocItems.value = nextToc
+  return md.renderer.render(tokens, md.options, {})
+}
 
 function parseFrontmatter(raw: string): { meta: Record<string, any>; content: string } {
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)
@@ -59,6 +100,23 @@ function parseFrontmatter(raw: string): { meta: Record<string, any>; content: st
   return { meta, content }
 }
 
+function scrollToHeadingByHash(hash: string, behavior: ScrollBehavior = 'smooth') {
+  const rawId = hash.replace(/^#/, '')
+  if (!rawId) return
+  const id = decodeURIComponent(rawId)
+  const target = document.getElementById(id)
+  if (!target) return
+  target.scrollIntoView({ behavior, block: 'start' })
+}
+
+async function jumpToHeading(id: string) {
+  const hash = `#${encodeURIComponent(id)}`
+  if (route.hash !== hash) {
+    await router.replace({ hash })
+  }
+  scrollToHeadingByHash(hash)
+}
+
 onMounted(async () => {
   try {
     const modules = import.meta.glob('../posts/*.md', { query: '?raw', import: 'default' })
@@ -77,7 +135,12 @@ onMounted(async () => {
     title.value = meta.title || slug.value
     date.value = meta.date || ''
     tags.value = Array.isArray(meta.tags) ? meta.tags : []
-    htmlContent.value = md.render(content)
+    htmlContent.value = renderMarkdownWithToc(content)
+    await nextTick()
+
+    if (route.hash) {
+      scrollToHeadingByHash(route.hash, 'auto')
+    }
 
     requestAnimationFrame(() => (visible.value = true))
   } catch {
@@ -85,6 +148,16 @@ onMounted(async () => {
     visible.value = true
   }
 })
+
+watch(
+  () => route.hash,
+  (hash) => {
+    if (!hash) return
+    requestAnimationFrame(() => {
+      scrollToHeadingByHash(hash)
+    })
+  }
+)
 
 function goBack() {
   router.push({ name: 'blog' })
@@ -104,7 +177,24 @@ function goBack() {
             <span v-for="tag in tags" :key="tag" class="tag-pill">{{ tag }}</span>
           </div>
         </header>
-        <div class="post-content" v-html="htmlContent" />
+        <div class="post-layout">
+          <div class="post-main">
+            <div class="post-content" v-html="htmlContent" />
+          </div>
+          <aside v-if="tocItems.length" class="toc">
+            <div class="toc-title">目录</div>
+            <button
+              v-for="item in tocItems"
+              :key="item.id"
+              type="button"
+              class="toc-link"
+              :class="`level-${item.level}`"
+              @click="jumpToHeading(item.id)"
+            >
+              {{ item.text }}
+            </button>
+          </aside>
+        </div>
       </template>
 
       <div v-else class="not-found">
@@ -122,9 +212,68 @@ function goBack() {
 }
 
 .container {
-  max-width: 780px;
+  max-width: 1120px;
   margin: 0 auto;
   padding: 0 32px;
+}
+
+.post-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 36px;
+  align-items: start;
+}
+
+.post-main {
+  min-width: 0;
+}
+
+.toc {
+  position: sticky;
+  top: 100px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  padding: 14px 12px;
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+}
+
+.toc-title {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.toc-link {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
+}
+
+.toc-link:hover {
+  color: var(--primary-light);
+  background: var(--tag-bg);
+}
+
+.toc-link.level-2 {
+  padding-left: 18px;
+}
+
+.toc-link.level-3 {
+  padding-left: 28px;
 }
 
 .back-btn {
@@ -211,12 +360,14 @@ function goBack() {
   margin: 48px 0 16px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
+  scroll-margin-top: 90px;
 }
 
 .post-content :deep(h3) {
   font-size: 1.2rem;
   font-weight: 600;
   margin: 32px 0 12px;
+  scroll-margin-top: 90px;
 }
 
 .post-content :deep(p) {
@@ -289,6 +440,15 @@ function goBack() {
   text-underline-offset: 3px;
 }
 
+.post-content :deep(img) {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  margin: 24px auto;
+  border-radius: 10px;
+}
+
 .post-content :deep(table) {
   width: 100%;
   border-collapse: collapse;
@@ -341,6 +501,21 @@ function goBack() {
 @media (max-width: 768px) {
   .blog-post {
     padding: 100px 0 60px;
+  }
+
+  .container {
+    padding: 0 20px;
+  }
+
+  .post-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .toc {
+    position: static;
+    max-height: none;
+    order: -1;
   }
 }
 </style>

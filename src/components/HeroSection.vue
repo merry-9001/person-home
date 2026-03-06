@@ -25,12 +25,6 @@ onMounted(() => {
         <a href="#projects" class="btn btn-primary">查看作品</a>
         <a href="#contact" class="btn btn-outline">联系我</a>
       </div>
-      <div class="scroll-hint">
-        <div class="mouse">
-          <div class="wheel" />
-        </div>
-        <span>向下滚动</span>
-      </div>
     </div>
   </section>
 </template>
