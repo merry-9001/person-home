@@ -13,8 +13,8 @@ const demos: DemoItem[] = [
   { id: 'lottery', title: '幸运大转盘', icon: '🎰', component: markRaw(LotteryGame) },
 ]
 
-const activeId = ref(demos[0].id)
-const activeComponent = shallowRef<Component>(demos[0].component)
+const activeId = ref(demos[0]!.id)
+const activeComponent = shallowRef<Component>(demos[0]!.component)
 const sidebarOpen = ref(false)
 
 function selectDemo(demo: DemoItem) {

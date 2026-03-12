@@ -20,7 +20,7 @@ function pickPrize(): number {
   const r = Math.random()
   let acc = 0
   for (let i = 0; i < prizes.length; i++) {
-    acc += prizes[i].chance
+    acc += prizes[i]!.chance
     if (r <= acc) return i
   }
   return prizes.length - 1
@@ -38,8 +38,9 @@ function spin() {
 
   setTimeout(() => {
     spinning.value = false
-    result.value = prizes[idx].label
-    history.value.unshift(prizes[idx].label)
+    const won = prizes[idx]!
+    result.value = won.label
+    history.value.unshift(won.label)
     if (history.value.length > 10) history.value.pop()
   }, 4200)
 }
