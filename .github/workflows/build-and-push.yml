@@ -26,7 +26,7 @@ jobs:
 
       - name: Clone target repo
         run: |
-          git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/merry-9001/merry-9001.github.io.git target-repo
+          git clone https://x-access-token:${{ secrets.test }}@github.com/merry-9001/merry-9001.github.io.git target-repo
 
       - name: Replace target repo contents
         run: |
