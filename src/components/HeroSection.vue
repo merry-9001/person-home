@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue'
 const show = ref(false)
 onMounted(() => {
   requestAnimationFrame(() => (show.value = true))
-})
+}) 
 </script>
 
 <template>
