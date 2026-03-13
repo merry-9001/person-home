@@ -14,5 +14,6 @@ import FooterSection from './components/FooterSection.vue'
 <style scoped>
 main {
   position: relative;
+  min-height: 70vh;
 }
 </style>
