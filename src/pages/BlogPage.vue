@@ -13,6 +13,7 @@ interface PostMeta {
 const router = useRouter()
 const posts = ref<PostMeta[]>([])
 const visible = ref(false)
+const loading = ref(true)
 const searchKeyword = ref('')
 
 function parseFrontmatter(raw: string): { meta: Record<string, any>; content: string } {
@@ -54,25 +55,52 @@ function parseFrontmatter(raw: string): { meta: Record<string, any>; content: st
 }
 
 onMounted(async () => {
-  const modules = import.meta.glob('../posts/*.md', { query: '?raw', import: 'default' })
-  const list: PostMeta[] = []
+  visible.value = true
 
-  for (const path in modules) {
-    const raw = (await modules[path]!()) as string
-    const { meta } = parseFrontmatter(raw)
-    const slug = path.split('/').pop()!.replace('.md', '')
-    list.push({
-      slug,
-      title: meta.title || slug,
-      date: meta.date || '',
-      summary: meta.summary || '',
-      tags: Array.isArray(meta.tags) ? meta.tags : [],
-    })
+  const modules = import.meta.glob('../posts/*.md', { query: '?raw', import: 'default' })
+  const entries = Object.entries(modules).sort(([a], [b]) => (a > b ? -1 : 1))
+  const INITIAL_BATCH_SIZE = 3
+  const STREAM_BATCH_SIZE = 4
+
+  const loadedPosts: PostMeta[] = []
+  let index = 0
+
+  for (const [path, loader] of entries) {
+    try {
+      const raw = (await loader()) as string
+      const { meta } = parseFrontmatter(raw)
+      const slug = path.split('/').pop()!.replace('.md', '')
+
+      loadedPosts.push({
+        slug,
+        title: meta.title || slug,
+        date: meta.date || '',
+        summary: meta.summary || '',
+        tags: Array.isArray(meta.tags) ? meta.tags : [],
+      })
+
+      index++
+
+      // 首批加载完成后再展示，避免加载态和真实内容频繁切换
+      if (loading.value && index >= INITIAL_BATCH_SIZE) {
+        posts.value = [...loadedPosts]
+        loading.value = false
+        continue
+      }
+
+      // 后续改为分批刷新，减少频繁重排带来的视觉跳动
+      if (!loading.value && index % STREAM_BATCH_SIZE === 0) {
+        posts.value = [...loadedPosts]
+      }
+    } catch {
+      // 单篇失败不影响其他文章
+      // 可以根据需要在这里上报错误
+    }
   }
 
-  list.sort((a, b) => (b.date > a.date ? 1 : -1))
-  posts.value = list
-  requestAnimationFrame(() => (visible.value = true))
+  // 收尾同步，确保最后一批也渲染出来
+  posts.value = [...loadedPosts]
+  loading.value = false
 })
 
 function goPost(slug: string) {
@@ -109,29 +137,48 @@ const filteredPosts = computed(() => {
           aria-label="搜索文章"
         />
       </div>
-      <div class="posts-list">
-        <article
-          v-for="(post, i) in filteredPosts"
-          :key="post.slug"
-          class="post-card"
-          :style="{ transitionDelay: `${i * 0.1 + 0.2}s` }"
-          @click="goPost(post.slug)"
-        >
-          <div class="post-date">{{ post.date }}</div>
-          <h2>{{ post.title }}</h2>
-          <p>{{ post.summary }}</p>
-          <div class="post-tags">
-            <span v-for="tag in post.tags" :key="tag" class="tag-pill">{{ tag }}</span>
+
+      <!-- 加载中骨架屏 -->
+      <div v-if="loading" class="posts-list">
+        <article v-for="n in 3" :key="n" class="post-card skeleton">
+          <div class="skeleton-date" />
+          <div class="skeleton-title" />
+          <div class="skeleton-line" />
+          <div class="skeleton-line short" />
+          <div class="skeleton-tags">
+            <span class="skeleton-tag" />
+            <span class="skeleton-tag" />
           </div>
-          <span class="read-more">阅读全文 →</span>
         </article>
+        <div class="loading-text">文章加载中，请稍候...</div>
       </div>
-      <div v-if="visible && posts.length === 0" class="empty">
-        <p>暂无文章，敬请期待...</p>
-      </div>
-      <div v-else-if="visible && filteredPosts.length === 0" class="empty">
-        <p>没有找到匹配的文章</p>
-      </div>
+
+      <!-- 加载完成后的正常列表与空状态 -->
+      <template v-else>
+        <div class="posts-list">
+          <article
+            v-for="(post, i) in filteredPosts"
+            :key="post.slug"
+            class="post-card"
+            :style="{ transitionDelay: `${i * 0.1 + 0.2}s` }"
+            @click="goPost(post.slug)"
+          >
+            <div class="post-date">{{ post.date }}</div>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.summary }}</p>
+            <div class="post-tags">
+              <span v-for="tag in post.tags" :key="tag" class="tag-pill">{{ tag }}</span>
+            </div>
+            <span class="read-more">阅读全文 →</span>
+          </article>
+        </div>
+        <div v-if="posts.length === 0" class="empty">
+          <p>暂无文章，敬请期待...</p>
+        </div>
+        <div v-else-if="filteredPosts.length === 0" class="empty">
+          <p>没有找到匹配的文章</p>
+        </div>
+      </template>
     </div>
   </section>
 </template>
@@ -220,6 +267,7 @@ const filteredPosts = computed(() => {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 36px;
+  min-height: 210px;
   cursor: pointer;
   transition: all 0.35s ease;
   opacity: 0;
@@ -285,6 +333,88 @@ const filteredPosts = computed(() => {
 
 .post-card:hover .read-more {
   color: var(--accent);
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    color-mix(in srgb, var(--border) 40%, transparent) 30%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  animation: skeleton-shimmer 1.4s infinite;
+}
+
+.skeleton-date,
+.skeleton-title,
+.skeleton-line,
+.skeleton-tag {
+  background: color-mix(in srgb, var(--bg-card) 60%, var(--border) 40%);
+  border-radius: 999px;
+}
+
+.skeleton-date {
+  width: 120px;
+  height: 10px;
+  margin-bottom: 14px;
+}
+
+.skeleton-title {
+  width: 70%;
+  height: 18px;
+  margin-bottom: 16px;
+}
+
+.skeleton-line {
+  width: 100%;
+  height: 10px;
+  margin-bottom: 10px;
+}
+
+.skeleton-line.short {
+  width: 60%;
+}
+
+.skeleton-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.skeleton-tag {
+  width: 60px;
+  height: 18px;
+}
+
+.loading-text {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.empty {
+  text-align: center;
+  padding: 80px 0;
+  color: var(--text-muted);
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .empty {

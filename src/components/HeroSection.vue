@@ -21,10 +21,6 @@ onMounted(() => {
       <p class="desc">
         热爱用代码构建优雅的数字体验，专注于现代 Web 技术与用户体验设计。
       </p>
-      <div class="hero-actions">
-        <a href="#projects" class="btn btn-primary">查看作品</a>
-        <a href="#contact" class="btn btn-outline">联系我</a>
-      </div>
     </div>
   </section>
 </template>

@@ -1,5 +1,17 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import heroImage from '../assets/hangzhou/hero.jpg'
+import fallbackImage from '../assets/hangzhou/fallback.jpg'
+import sceneWestLakeImage from '../assets/hangzhou/scene-west-lake.jpg'
+import sceneLiangzhuImage from '../assets/hangzhou/scene-liangzhu.jpg'
+import sceneXixiImage from '../assets/hangzhou/scene-xixi.jpg'
+import sceneCanalImage from '../assets/hangzhou/scene-canal.jpg'
+import sceneLingyinImage from '../assets/hangzhou/scene-lingyin.jpg'
+import sceneQiantangImage from '../assets/hangzhou/scene-qiantang.jpg'
+import seasonSpringImage from '../assets/hangzhou/season-spring.jpg'
+import seasonSummerImage from '../assets/hangzhou/season-summer.jpg'
+import seasonAutumnImage from '../assets/hangzhou/season-autumn.jpg'
+import seasonWinterImage from '../assets/hangzhou/season-winter.jpg'
 
 const visible = ref(false)
 onMounted(() => {
@@ -8,74 +20,64 @@ onMounted(() => {
 
 const scenes = [
   {
-    name: '苏堤春晓', icon: '🌸', season: '春', best: '3-4月清晨',
-    location: '西湖西侧，南山路至北山路',
-    desc: '苏堤全长 2.8 公里，由北宋大文豪苏轼任杭州知州时疏浚西湖、以湖泥堆筑而成。堤上遍植桃柳，春日清晨晨雾未散时漫步其间，桃红柳绿交相辉映，六桥烟柳笼纱，湖光山色如诗如画。苏堤春晓自南宋起便位列西湖十景之首，千百年来无数文人墨客为之倾倒。',
-    poem: '苏堤景致六条桥，一株杨柳一株桃。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,west-lake,sudi',
+    name: '西湖',
+    icon: '🌊',
+    season: '名片',
+    best: '四季皆宜',
+    location: '杭州市西湖区',
+    desc: '西湖是杭州最具辨识度的城市名片，山水格局与人文景观交织，形成了“城中有湖、湖中有山、山水入城”的独特气质。沿湖可串联苏堤、白堤、孤山、雷峰塔等经典节点，四季皆有不同风貌。',
+    poem: '欲把西湖比西子，淡妆浓抹总相宜。',
+    image: sceneWestLakeImage,
   },
   {
-    name: '断桥残雪', icon: '❄️', season: '冬', best: '12-2月雪后初晴',
-    location: '白堤东端，北山路口',
-    desc: '断桥是西湖上最负盛名的一座桥，因《白蛇传》中许仙与白娘子在此相遇的爱情传说而家喻户晓。每当冬日大雪初霁，桥的阳面冰雪消融、阴面残雪如霜，远望去桥面似断非断，\u201c断桥残雪\u201d的意境便由此而来。伫立桥上极目远眺，银装素裹的湖山一览无余。',
-    poem: '断桥荒藓涩，空院落花深。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,broken-bridge,snow',
+    name: '良渚古城遗址',
+    icon: '🏺',
+    season: '遗产',
+    best: '春秋舒适',
+    location: '余杭区瓶窑镇一带',
+    desc: '良渚古城遗址见证了五千多年中华文明发展，是实证中华文明多元一体的重要窗口。宫殿区、城墙、水利系统与玉器礼制共同构成了早期国家形态，被列入世界文化遗产。',
+    poem: '五千年文明曙光，于此可见。',
+    image: sceneLiangzhuImage,
   },
   {
-    name: '曲院风荷', icon: '🪷', season: '夏', best: '6-8月盛夏',
-    location: '西湖西北角，岳庙前',
-    desc: '曲院原为南宋朝廷酿造官酒的作坊，因靠近荷花池而得名。如今这里是西湖最大的赏荷胜地，占地约 430 亩。盛夏时节，满塘荷花竞相绽放，红莲、白莲、重台莲、洒金莲等数十个品种争奇斗艳，微风拂过清香四溢，漫步曲桥之上仿佛置身画中。',
-    poem: '接天莲叶无穷碧，映日荷花别样红。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,lotus,west-lake',
+    name: '西溪国家湿地公园',
+    icon: '🌿',
+    season: '生态',
+    best: '春秋最佳',
+    location: '西湖区天目山路延伸段',
+    desc: '西溪湿地是“城中次生湿地”的典型代表，水网、芦荡、鱼塘与村落相互交织，兼具生态保护和人文游憩价值。乘船穿行水巷，能感受到杭州“山水与城市共生”的另一面。',
+    poem: '一曲溪流一曲烟，满城清润入江南。',
+    image: sceneXixiImage,
   },
   {
-    name: '平湖秋月', icon: '🌙', season: '秋', best: '中秋月夜',
-    location: '白堤西端，孤山南麓',
-    desc: '平湖秋月三面临水，背倚孤山，是西湖赏月的绝佳之地。每逢仲秋之夜，皓月当空、清风徐来，湖面波光粼粼宛如铺洒了一层碎银。此处视野开阔，远山近水尽收眼底，天上一轮明月与湖中倒影遥相呼应，天水一色、万籁俱寂，令人心旷神怡。',
-    poem: '万顷湖平长似镜，四时月好最宜秋。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,moon,west-lake',
+    name: '京杭大运河（杭州段）',
+    icon: '🚤',
+    season: '古今',
+    best: '夜景推荐',
+    location: '拱墅区武林门至桥西历史街区',
+    desc: '京杭大运河杭州段既是古代漕运命脉，也是当代城市更新的重要轴线。沿线保留了仓储、码头、桥梁等历史肌理，同时发展出博物馆群与滨水夜游，展现了“活态遗产”的城市样本。',
+    poem: '一河通古今，千帆入人间。',
+    image: sceneCanalImage,
   },
   {
-    name: '三潭印月', icon: '🏮', season: '秋', best: '中秋月夜',
-    location: '西湖中央小瀛洲岛',
-    desc: '三潭印月是西湖中最大的岛屿，岛内湖中有岛、岛中有湖，布局精巧如同中国园林的缩影。湖面上三座瓶形石塔始建于北宋，高 2 米，中空有五个圆孔。中秋之夜塔内点烛、口蒙薄纱，烛光与月光交映在湖面上，形成\u201c天上月一轮，湖中影成三\u201d的奇景，也是一元纸币背面的经典图案。',
-    poem: '月光映潭潭映月，下天上天天与水。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,three-pools-mirroring-the-moon',
+    name: '灵隐寺与飞来峰',
+    icon: '⛰️',
+    season: '人文',
+    best: '清晨或雨后',
+    location: '西湖区灵隐路',
+    desc: '灵隐寺与飞来峰是杭州佛教文化与石刻艺术的代表区域。古刹香火绵延，山体间分布大量历代摩崖造像，宗教、艺术与自然景观在此融合，形成独特的文化游览体验。',
+    poem: '古木参天处，梵音入云深。',
+    image: sceneLingyinImage,
   },
   {
-    name: '花港观鱼', icon: '🐟', season: '四季', best: '春秋两季',
-    location: '苏堤南段西侧',
-    desc: '花港观鱼因有一条花溪从花家山流入西湖而得名。园内亭台楼阁掩映于古木花丛之间，牡丹园里种植了数百株名品牡丹。最引人注目的是红鱼池——数千尾锦鲤在池中游弋，红、金、白各色交织，游客投食时鱼群翻涌聚拢，一片生机盎然的景象。',
-    poem: '花家山下流花港，花著鱼身鱼嘬花。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,fish,pond,garden',
-  },
-  {
-    name: '柳浪闻莺', icon: '🐦', season: '春', best: '3-5月',
-    location: '西湖东南岸，南山路',
-    desc: '柳浪闻莺在南宋时曾是皇家御花园\u201c聚景园\u201d的所在地。如今这里是杭州最大的沿湖公园，千余株垂柳沿湖岸依次排列。春天柳枝吐翠时，微风拂过杨柳随风飘舞如绿浪翻涌；林间黄莺穿梭啼啭、清脆悦耳，鸟鸣与远处湖波和鸣，是西湖边最富诗情画意的角落。',
-    poem: '柳荫深霭玉壶清，碧浪摇空舞袖轻。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,willow,west-lake',
-  },
-  {
-    name: '雷峰夕照', icon: '🌅', season: '四季', best: '傍晚日落时分',
-    location: '西湖南岸夕照山上',
-    desc: '雷峰塔始建于公元 977 年（北宋太平兴国二年），因《白蛇传》中法海将白娘子镇于塔下的故事而名满天下。旧塔于 1924 年倒塌，2002 年在原址重建。每当夕阳西下，漫天晚霞映照金色塔身，宝塔的剪影倒映在粼粼波光之中，与远处保俶塔遥相对望，构成\u201c一湖映双塔、南北相对峙\u201d的绝美画面。',
-    poem: '雷峰如老衲，保俶如美人。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,leifeng-pagoda,sunset',
-  },
-  {
-    name: '双峰插云', icon: '⛰️', season: '四季', best: '雨后云雾天',
-    location: '南高峰与北高峰',
-    desc: '南高峰海拔 257 米，北高峰海拔 355 米，两峰南北对峙、遥相呼应，是西湖群山中最具代表性的山峰。每逢春秋之际或雨后初晴，云雾从山谷间升腾缭绕，两座山峰时隐时现于飘渺云海之中，峰尖若隐若现犹如插入云霄，恍若仙境。登上峰顶则可俯瞰整个西湖全景。',
-    poem: '南北高峰高插天，两峰相对不相连。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,peak,cloud,mountain',
-  },
-  {
-    name: '南屏晚钟', icon: '🔔', season: '四季', best: '傍晚时分',
-    location: '西湖南岸南屏山下净慈寺',
-    desc: '净慈寺始建于五代后周显德元年（954 年），与灵隐寺并称为杭州两大古刹。寺内铜钟重达一万余斤，钟声浑厚悠扬。每当暮色四合、夕阳衔山之际，悠长的钟声从南屏山间传出，在群山与湖面之间回荡不绝。济公和尚的传说也为这座古寺增添了几分传奇色彩。',
-    poem: '夜气滃南屏，轻岚薄如纸。钟声出上方，夜渡空江水。',
-    image: 'https://source.unsplash.com/1200x800/?hangzhou,temple,bell,evening',
+    name: '钱塘江与城市阳台',
+    icon: '🌉',
+    season: '活力',
+    best: '傍晚至夜间',
+    location: '上城区钱江新城沿线',
+    desc: '钱塘江是杭州现代城市发展的主轴之一，城市阳台与两岸天际线共同勾勒出“新杭州”形象。每年观潮季与夜景灯光都极具吸引力，体现了杭州从古都到数字之城的时代转身。',
+    poem: '潮来天地阔，灯起满江城。',
+    image: sceneQiantangImage,
   },
 ]
 
@@ -83,29 +85,29 @@ const seasonCards = [
   {
     key: 'spring',
     label: '🌸 春赏桃花',
-    image: 'https://source.unsplash.com/1400x900/?hangzhou,peach-blossom,spring',
+    image: seasonSpringImage,
   },
   {
     key: 'summer',
     label: '🪷 夏观荷花',
-    image: 'https://source.unsplash.com/1400x900/?hangzhou,lotus,summer',
+    image: seasonSummerImage,
   },
   {
     key: 'autumn',
     label: '🍂 秋品桂香',
-    image: 'https://source.unsplash.com/1400x900/?hangzhou,osmanthus,autumn',
+    image: seasonAutumnImage,
   },
   {
     key: 'winter',
     label: '❄️ 冬看断桥',
-    image: 'https://source.unsplash.com/1400x900/?hangzhou,broken-bridge,winter',
+    image: seasonWinterImage,
   },
 ]
 
 const fallbackSeasonCard = {
   key: 'spring',
   label: '🌸 春赏桃花',
-  image: 'https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=1400&q=80',
+  image: fallbackImage,
 }
 
 const activeSeason = ref(seasonCards[0]?.key ?? fallbackSeasonCard.key)
@@ -121,7 +123,7 @@ const activeSeasonCard = computed(
       <div class="hero-bg">
         <div class="hero-overlay" />
         <img
-          src="https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=1600&q=80"
+          :src="heroImage"
           alt="杭州西湖"
           class="hero-img"
         />
@@ -164,8 +166,8 @@ const activeSeasonCard = computed(
       <div class="section-inner">
         <div class="section-header">
           <span class="section-tag">核心景区</span>
-          <h2>西湖十景</h2>
-          <p>自南宋以来，西湖十景就是杭州最具代表性的文化名片，每一景都承载着千年的诗意与传说</p>
+          <h2>杭州城市名片</h2>
+          <p>从西湖到良渚，从西溪湿地到京杭大运河，这些地标共同构成了杭州“自然、人文、古今交融”的城市气质</p>
         </div>
         <div class="xihu-grid">
           <div class="xihu-card" v-for="(scene, i) in scenes" :key="i">
@@ -184,7 +186,7 @@ const activeSeasonCard = computed(
               <div class="xihu-image-wrap">
                 <img
                   class="xihu-image"
-                  :src="scene.image || 'https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=1200&q=80'"
+                  :src="scene.image || fallbackImage"
                   :alt="`${scene.name}相关图片`"
                 />
               </div>

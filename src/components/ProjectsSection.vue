@@ -22,36 +22,25 @@ interface Project {
   tags: string[]
   color: string
   icon: string
+  link: string
 }
 
 const projects: Project[] = [
   {
-    title: '智能任务管理平台',
-    desc: '基于 AI 驱动的任务优先级排序与自动化工作流管理系统，支持团队协作与数据分析。',
-    tags: ['Vue 3', 'Node.js', 'MongoDB', 'AI'],
+    title: '低代码可视化平台',
+    desc: '基于拖拽搭建页面的低代码演示项目，支持组件拼装、属性配置和实时预览，适合快速验证产品想法。',
+    tags: ['Vue 3', '低代码', '可视化搭建'],
     color: '#6366f1',
-    icon: '📋',
-  },
-  {
-    title: '实时数据可视化仪表盘',
-    desc: '高性能的实时数据监控平台，支持自定义图表、告警规则与多数据源接入。',
-    tags: ['React', 'D3.js', 'WebSocket', 'Go'],
-    color: '#06b6d4',
-    icon: '📊',
-  },
-  {
-    title: '跨平台移动应用',
-    desc: '一套代码多端运行的移动应用解决方案，涵盖社交、电商等多种业务场景。',
-    tags: ['Flutter', 'Dart', 'Firebase', 'REST API'],
-    color: '#8b5cf6',
-    icon: '📱',
-  },
-  {
-    title: '开源组件库',
-    desc: '面向开发者的高质量 UI 组件库，支持主题定制、国际化与无障碍访问。',
-    tags: ['TypeScript', 'Vue 3', 'Vite', 'Storybook'],
-    color: '#10b981',
     icon: '🧩',
+    link: 'https://person-low-code.vercel.app/#/',
+  },
+  {
+    title: 'BPMN 工作流引擎',
+    desc: '基于 BPMN 的可视化流程设计与运行演示，支持在浏览器中拖拽绘制流程并进行流程配置。',
+    tags: ['Vue 3', 'BPMN', '工作流'],
+    color: '#06b6d4',
+    icon: '🔄',
+    link: 'https://person-bpmn.vercel.app/',
   },
 ]
 </script>
@@ -80,7 +69,14 @@ const projects: Project[] = [
             </div>
           </div>
           <div class="card-footer">
-            <a href="#" class="card-link">查看详情 →</a>
+            <a
+              :href="p.link"
+              class="card-link"
+              target="_blank"
+              rel="noopener"
+            >
+              访问项目 →
+            </a>
           </div>
         </article>
       </div>
