@@ -3,7 +3,7 @@ name: Build and Push to Another Repo
 on:
   push:
     branches:
-      - main   # 改成你的源码仓库分支
+      - main
 
 jobs:
   build-and-push:
@@ -16,13 +16,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22   # 改成你的 Node 版本
+          node-version: 22
 
       - name: Install dependencies
-        run: npm ci   # 没有 package-lock.json 就改 npm install
+        run: npm install
 
       - name: Build project
-        run: npm run build   # 改成你的实际构建命令
+        run: npm run build
 
       - name: Clone target repo
         run: |
@@ -31,7 +31,7 @@ jobs:
       - name: Replace target repo contents
         run: |
           find target-repo -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
-          cp -r dist/* target-repo/
+          cp -r dist/. target-repo/
 
       - name: Commit and push
         run: |
@@ -45,5 +45,5 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Build from source-repo @ ${GITHUB_SHA}" 
-          git push 
+          git commit -m "Build from source-repo @ ${GITHUB_SHA}"
+          git push origin main
