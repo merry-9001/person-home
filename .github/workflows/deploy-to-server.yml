@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/person-low-home
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/person-home
 
     steps:
       - name: Checkout
@@ -51,7 +51,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script_stop: true
           script: |
-            cd /opt/person-low-home
+            cd /opt/person-home
             chmod +x deploy.sh
             export APP_IMAGE="${{ env.IMAGE_NAME }}:latest"
             ./deploy.sh main
