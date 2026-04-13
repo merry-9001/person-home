@@ -3,5 +3,5 @@ services:
     container_name: person-home
     image: ${APP_IMAGE:-your-dockerhub-username/person-home:latest}
     ports:
-      - "8080:80"
+      - "8081:80"
     restart: unless-stopped
