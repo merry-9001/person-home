@@ -1,8 +1,13 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import HomePage from '../pages/HomePage.vue'
 
+const createHistory =
+  import.meta.env.VITE_ROUTER_MODE === 'hash'
+    ? createWebHashHistory
+    : createWebHistory
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: createHistory(),
   routes: [
     {
       path: '/',

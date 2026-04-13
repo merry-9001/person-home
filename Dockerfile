@@ -8,7 +8,8 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
 COPY . .
-RUN pnpm build
+ARG VITE_ROUTER_MODE=history
+RUN VITE_ROUTER_MODE="${VITE_ROUTER_MODE}" pnpm build
 
 FROM nginx:1.27-alpine
 

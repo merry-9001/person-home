@@ -41,6 +41,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_ROUTER_MODE=history
 
       - name: Trigger remote deployment
         uses: appleboy/ssh-action@v1.2.0
