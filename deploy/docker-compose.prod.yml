@@ -1,0 +1,7 @@
+services:
+  person-low-home:
+    container_name: person-low-home
+    image: ${APP_IMAGE:-your-dockerhub-username/person-low-home:latest}
+    ports:
+      - "8080:80"
+    restart: unless-stopped
