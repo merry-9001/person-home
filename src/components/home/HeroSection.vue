@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import homeData from '../../data/home.json'
 
 const show = ref(false)
 onMounted(() => {
@@ -15,11 +16,11 @@ onMounted(() => {
       <div class="grid-overlay" />
     </div>
     <div class="hero-content">
-      <p class="greeting">你好，我是</p>
-      <h1 class="name">云边缘<span class="dot">.</span></h1>
-      <h2 class="title">全栈开发者 & 创意工程师</h2>
+      <p class="greeting">{{ homeData.hero.greeting }}</p>
+      <h1 class="name">{{ homeData.hero.name }}<span class="dot">.</span></h1>
+      <h2 class="title">{{ homeData.hero.title }}</h2>
       <p class="desc">
-        热爱用代码构建优雅的数字体验，专注于现代 Web 技术与用户体验设计。
+        {{ homeData.hero.description }}
       </p>
     </div>
   </section>

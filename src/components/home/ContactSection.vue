@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import homeData from '../../data/home.json'
 
 const sectionRef = ref<HTMLElement | null>(null)
 const visible = ref(false)
@@ -16,24 +17,20 @@ onMounted(() => {
 })
 onUnmounted(() => window.removeEventListener('scroll', check))
 
-const contacts = [
-  { icon: '📧', label: '邮箱', value: 'hello@example.com', href: 'mailto:hello@example.com' },
-  { icon: '🐙', label: 'GitHub', value: 'github.com/yourname', href: 'https://github.com' },
-  { icon: '💬', label: '微信', value: 'your_wechat_id', href: '#' },
-]
+const contact = homeData.contact
 </script>
 
 <template>
   <section id="contact" ref="sectionRef" class="contact" :class="{ visible }">
     <div class="container">
       <div class="section-header">
-        <span class="tag">联系</span>
-        <h2>与我取得联系</h2>
-        <p class="subtitle">无论是项目合作、技术交流还是随便聊聊，都欢迎联系我</p>
+        <span class="tag">{{ contact.tag }}</span>
+        <h2>{{ contact.title }}</h2>
+        <p class="subtitle">{{ contact.subtitle }}</p>
       </div>
       <div class="contact-grid">
         <a
-          v-for="(c, i) in contacts"
+          v-for="(c, i) in contact.items"
           :key="c.label"
           :href="c.href"
           class="contact-card"

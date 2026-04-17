@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import homeData from '../../data/home.json'
 
 const sectionRef = ref<HTMLElement | null>(null)
 const visible = ref(false)
@@ -16,37 +17,19 @@ onMounted(() => {
 })
 onUnmounted(() => window.removeEventListener('scroll', check))
 
-interface Skill {
-  name: string
-  icon: string
-}
-
-const skills: Skill[] = [
-  { name: 'Vue.js', icon: '💚' },
-  { name: 'React', icon: '⚛️' },
-  { name: 'TypeScript', icon: '🔷' },
-  { name: 'CSS / Tailwind', icon: '🎭' },
-  { name: 'Node.js', icon: '🟢' },
-  { name: 'Python', icon: '🐍' },
-  { name: 'Go', icon: '🔵' },
-  { name: 'PostgreSQL', icon: '🐘' },
-  { name: 'Docker', icon: '🐳' },
-  { name: 'Git', icon: '📦' },
-  { name: 'Linux', icon: '🐧' },
-  { name: 'CI/CD', icon: '🔄' },
-]
+const skills = homeData.skills
 </script>
 
 <template>
   <section id="skills" ref="sectionRef" class="skills" :class="{ visible }">
     <div class="container">
       <div class="section-header">
-        <span class="tag">技能</span>
-        <h2>技术栈一览</h2>
+        <span class="tag">{{ skills.tag }}</span>
+        <h2>{{ skills.title }}</h2>
       </div>
       <div class="skills-grid">
         <div
-          v-for="(skill, index) in skills"
+          v-for="(skill, index) in skills.items"
           :key="skill.name"
           class="skill-item"
           :style="{ transitionDelay: `${index * 0.06 + 0.2}s` }"

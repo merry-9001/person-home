@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import homeData from '../../data/home.json'
 
 const sectionRef = ref<HTMLElement | null>(null)
 const visible = ref(false)
@@ -16,45 +17,19 @@ onMounted(() => {
 })
 onUnmounted(() => window.removeEventListener('scroll', check))
 
-interface Project {
-  title: string
-  desc: string
-  tags: string[]
-  color: string
-  icon: string
-  link: string
-}
-
-const projects: Project[] = [
-  {
-    title: '低代码可视化平台',
-    desc: '基于拖拽搭建页面的低代码演示项目，支持组件拼装、属性配置和实时预览，适合快速验证产品想法。',
-    tags: ['Vue 3', '低代码', '可视化搭建'],
-    color: '#6366f1',
-    icon: '🧩',
-    link: 'https://person-low-code.vercel.app/#/',
-  },
-  {
-    title: 'BPMN 工作流引擎',
-    desc: '基于 BPMN 的可视化流程设计与运行演示，支持在浏览器中拖拽绘制流程并进行流程配置。',
-    tags: ['Vue 3', 'BPMN', '工作流'],
-    color: '#06b6d4',
-    icon: '🔄',
-    link: 'https://person-bpmn.vercel.app/',
-  },
-]
+const projects = homeData.projects
 </script>
 
 <template>
   <section id="projects" ref="sectionRef" class="projects" :class="{ visible }">
     <div class="container">
       <div class="section-header">
-        <span class="tag">项目</span>
-        <h2>精选作品</h2>
+        <span class="tag">{{ projects.tag }}</span>
+        <h2>{{ projects.title }}</h2>
       </div>
       <div class="projects-grid">
         <article
-          v-for="(p, i) in projects"
+          v-for="(p, i) in projects.items"
           :key="p.title"
           class="project-card"
           :style="{ transitionDelay: `${i * 0.12 + 0.2}s` }"
@@ -75,7 +50,7 @@ const projects: Project[] = [
               target="_blank"
               rel="noopener"
             >
-              访问项目 →
+              {{ projects.linkText }}
             </a>
           </div>
         </article>

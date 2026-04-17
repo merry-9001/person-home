@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "greeting": "你好，我是",
+    "name": "云边缘",
+    "title": "全栈开发者 & 创意工程师",
+    "description": "热爱用代码构建优雅的数字体验，专注于现代 Web 技术与用户体验设计。"
+  },
+  "about": {
+    "tag": "关于我",
+    "title": "了解我的故事",
+    "paragraphs": [
+      "我是一名充满热情的全栈开发者，拥有多年的软件开发经验。从前端到后端，从移动应用到云服务，我享受将创意转化为现实的每一个过程。",
+      "我相信优秀的代码不仅仅是功能的实现，更是艺术的表达。我始终追求简洁、高效、优雅的解决方案，同时注重用户体验和代码质量。",
+      "在工作之余，我喜欢探索新技术、参与开源项目、阅读技术博客，并热衷于与社区分享自己的心得和经验。"
+    ],
+    "stats": [
+      { "value": "5+", "label": "年经验" },
+      { "value": "30+", "label": "完成项目" },
+      { "value": "10+", "label": "技术栈" },
+      { "value": "∞", "label": "学习热情" }
+    ]
+  },
+  "skills": {
+    "tag": "技能",
+    "title": "技术栈一览",
+    "items": [
+      { "name": "Vue.js", "icon": "💚" },
+      { "name": "React", "icon": "⚛️" },
+      { "name": "TypeScript", "icon": "🔷" },
+      { "name": "CSS / Tailwind", "icon": "🎭" },
+      { "name": "Node.js", "icon": "🟢" },
+      { "name": "Python", "icon": "🐍" },
+      { "name": "Go", "icon": "🔵" },
+      { "name": "PostgreSQL", "icon": "🐘" },
+      { "name": "Docker", "icon": "🐳" },
+      { "name": "Git", "icon": "📦" },
+      { "name": "Linux", "icon": "🐧" },
+      { "name": "CI/CD", "icon": "🔄" }
+    ]
+  },
+  "projects": {
+    "tag": "项目",
+    "title": "精选作品",
+    "linkText": "访问项目 →",
+    "items": [
+      {
+        "title": "低代码可视化平台",
+        "desc": "基于拖拽搭建页面的低代码演示项目，支持组件拼装、属性配置和实时预览，适合快速验证产品想法。",
+        "tags": ["Vue 3", "低代码", "可视化搭建"],
+        "color": "#6366f1",
+        "icon": "🧩",
+        "link": "https://person-low-code.vercel.app/#/"
+      },
+      {
+        "title": "BPMN 工作流引擎",
+        "desc": "基于 BPMN 的可视化流程设计与运行演示，支持在浏览器中拖拽绘制流程并进行流程配置。",
+        "tags": ["Vue 3", "BPMN", "工作流"],
+        "color": "#06b6d4",
+        "icon": "🔄",
+        "link": "https://person-bpmn.vercel.app/"
+      }
+    ]
+  },
+  "contact": {
+    "tag": "联系",
+    "title": "与我取得联系",
+    "subtitle": "无论是项目合作、技术交流还是随便聊聊，都欢迎联系我",
+    "items": [
+      { "icon": "📧", "label": "邮箱", "value": "hello@example.com", "href": "mailto:hello@example.com" },
+      { "icon": "🐙", "label": "GitHub", "value": "github.com/yourname", "href": "https://github.com" },
+      { "icon": "💬", "label": "微信", "value": "your_wechat_id", "href": "#" }
+    ]
+  }
+}

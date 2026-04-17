@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import hangzhouData from '../data/hangzhou.json'
 import heroImage from '../assets/hangzhou/hero.jpg'
 import fallbackImage from '../assets/hangzhou/fallback.jpg'
 import sceneWestLakeImage from '../assets/hangzhou/scene-west-lake.jpg'
@@ -18,98 +19,44 @@ onMounted(() => {
   visible.value = true
 })
 
-const scenes = [
-  {
-    name: '西湖',
-    icon: '🌊',
-    season: '名片',
-    best: '四季皆宜',
-    location: '杭州市西湖区',
-    desc: '西湖是杭州最具辨识度的城市名片，山水格局与人文景观交织，形成了“城中有湖、湖中有山、山水入城”的独特气质。沿湖可串联苏堤、白堤、孤山、雷峰塔等经典节点，四季皆有不同风貌。',
-    poem: '欲把西湖比西子，淡妆浓抹总相宜。',
-    image: sceneWestLakeImage,
-  },
-  {
-    name: '良渚古城遗址',
-    icon: '🏺',
-    season: '遗产',
-    best: '春秋舒适',
-    location: '余杭区瓶窑镇一带',
-    desc: '良渚古城遗址见证了五千多年中华文明发展，是实证中华文明多元一体的重要窗口。宫殿区、城墙、水利系统与玉器礼制共同构成了早期国家形态，被列入世界文化遗产。',
-    poem: '五千年文明曙光，于此可见。',
-    image: sceneLiangzhuImage,
-  },
-  {
-    name: '西溪国家湿地公园',
-    icon: '🌿',
-    season: '生态',
-    best: '春秋最佳',
-    location: '西湖区天目山路延伸段',
-    desc: '西溪湿地是“城中次生湿地”的典型代表，水网、芦荡、鱼塘与村落相互交织，兼具生态保护和人文游憩价值。乘船穿行水巷，能感受到杭州“山水与城市共生”的另一面。',
-    poem: '一曲溪流一曲烟，满城清润入江南。',
-    image: sceneXixiImage,
-  },
-  {
-    name: '京杭大运河（杭州段）',
-    icon: '🚤',
-    season: '古今',
-    best: '夜景推荐',
-    location: '拱墅区武林门至桥西历史街区',
-    desc: '京杭大运河杭州段既是古代漕运命脉，也是当代城市更新的重要轴线。沿线保留了仓储、码头、桥梁等历史肌理，同时发展出博物馆群与滨水夜游，展现了“活态遗产”的城市样本。',
-    poem: '一河通古今，千帆入人间。',
-    image: sceneCanalImage,
-  },
-  {
-    name: '灵隐寺与飞来峰',
-    icon: '⛰️',
-    season: '人文',
-    best: '清晨或雨后',
-    location: '西湖区灵隐路',
-    desc: '灵隐寺与飞来峰是杭州佛教文化与石刻艺术的代表区域。古刹香火绵延，山体间分布大量历代摩崖造像，宗教、艺术与自然景观在此融合，形成独特的文化游览体验。',
-    poem: '古木参天处，梵音入云深。',
-    image: sceneLingyinImage,
-  },
-  {
-    name: '钱塘江与城市阳台',
-    icon: '🌉',
-    season: '活力',
-    best: '傍晚至夜间',
-    location: '上城区钱江新城沿线',
-    desc: '钱塘江是杭州现代城市发展的主轴之一，城市阳台与两岸天际线共同勾勒出“新杭州”形象。每年观潮季与夜景灯光都极具吸引力，体现了杭州从古都到数字之城的时代转身。',
-    poem: '潮来天地阔，灯起满江城。',
-    image: sceneQiantangImage,
-  },
-]
-
-const seasonCards = [
-  {
-    key: 'spring',
-    label: '🌸 春赏桃花',
-    image: seasonSpringImage,
-  },
-  {
-    key: 'summer',
-    label: '🪷 夏观荷花',
-    image: seasonSummerImage,
-  },
-  {
-    key: 'autumn',
-    label: '🍂 秋品桂香',
-    image: seasonAutumnImage,
-  },
-  {
-    key: 'winter',
-    label: '❄️ 冬看断桥',
-    image: seasonWinterImage,
-  },
-]
-
-const fallbackSeasonCard = {
-  key: 'spring',
-  label: '🌸 春赏桃花',
-  image: fallbackImage,
+const hangzhouImages = {
+  hero: heroImage,
+  fallback: fallbackImage,
+  sceneWestLake: sceneWestLakeImage,
+  sceneLiangzhu: sceneLiangzhuImage,
+  sceneXixi: sceneXixiImage,
+  sceneCanal: sceneCanalImage,
+  sceneLingyin: sceneLingyinImage,
+  sceneQiantang: sceneQiantangImage,
+  seasonSpring: seasonSpringImage,
+  seasonSummer: seasonSummerImage,
+  seasonAutumn: seasonAutumnImage,
+  seasonWinter: seasonWinterImage,
 }
 
+type HangzhouImageKey = keyof typeof hangzhouImages
+
+function getHangzhouImage(key?: string) {
+  if (key && key in hangzhouImages) return hangzhouImages[key as HangzhouImageKey]
+  return fallbackImage
+}
+
+const hero = hangzhouData.hero
+const landmarks = hangzhouData.landmarks
+const cta = hangzhouData.cta
+const scenes = hangzhouData.scenes.map((scene) => ({
+  ...scene,
+  image: getHangzhouImage(scene.image),
+}))
+const seasonCards = cta.seasons.map((season) => ({
+  ...season,
+  image: getHangzhouImage(season.image),
+}))
+const fallbackSeasonCard = {
+  ...cta.fallbackSeason,
+  image: getHangzhouImage(cta.fallbackSeason.image),
+}
+const heroImageSrc = getHangzhouImage(hero.image)
 const activeSeason = ref(seasonCards[0]?.key ?? fallbackSeasonCard.key)
 const activeSeasonCard = computed(
   () => seasonCards.find((item) => item.key === activeSeason.value) ?? seasonCards[0] ?? fallbackSeasonCard,
@@ -123,38 +70,31 @@ const activeSeasonCard = computed(
       <div class="hero-bg">
         <div class="hero-overlay" />
         <img
-          :src="heroImage"
-          alt="杭州西湖"
+          :src="heroImageSrc"
+          :alt="hero.imageAlt"
           class="hero-img"
         />
       </div>
       <div class="hero-content">
-        <span class="hero-badge">🏯 人间天堂</span>
+        <span class="hero-badge">{{ hero.badge }}</span>
         <h1 class="hero-title">
-          <span class="line">杭 州</span>
-          <span class="line-en">HANGZHOU</span>
+          <span class="line">{{ hero.title }}</span>
+          <span class="line-en">{{ hero.titleEn }}</span>
         </h1>
         <p class="hero-desc">
-          上有天堂，下有苏杭。杭州自古以来就以秀丽的山水和深厚的文化底蕴闻名于世，<br />
-          是一座融合了古典韵味与现代活力的魅力之城。
+          <template v-for="(line, index) in hero.descriptionLines" :key="line">
+            {{ line }}<br v-if="index < hero.descriptionLines.length - 1" />
+          </template>
         </p>
         <div class="hero-stats">
-          <div class="stat">
-            <span class="stat-num">2200+</span>
-            <span class="stat-label">年建城史</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num">1243</span>
-            <span class="stat-label">万常住人口</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num">3</span>
-            <span class="stat-label">项世界遗产</span>
+          <div v-for="stat in hero.stats" :key="stat.label" class="stat">
+            <span class="stat-num">{{ stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
           </div>
         </div>
       </div>
       <div class="scroll-hint">
-        <span>向下探索</span>
+        <span>{{ hero.scrollHint }}</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 5v14M5 12l7 7 7-7" />
         </svg>
@@ -165,9 +105,9 @@ const activeSeasonCard = computed(
     <section class="xihu-section">
       <div class="section-inner">
         <div class="section-header">
-          <span class="section-tag">核心景区</span>
-          <h2>杭州城市名片</h2>
-          <p>从西湖到良渚，从西溪湿地到京杭大运河，这些地标共同构成了杭州“自然、人文、古今交融”的城市气质</p>
+          <span class="section-tag">{{ landmarks.tag }}</span>
+          <h2>{{ landmarks.title }}</h2>
+          <p>{{ landmarks.description }}</p>
         </div>
         <div class="xihu-grid">
           <div class="xihu-card" v-for="(scene, i) in scenes" :key="i">
@@ -200,8 +140,8 @@ const activeSeasonCard = computed(
     <!-- CTA -->
     <section class="cta-section">
       <div class="section-inner cta-inner">
-        <h2>来杭州，遇见最美的风景</h2>
-        <p>无论春夏秋冬，杭州都有不同的美等你来发现</p>
+        <h2>{{ cta.title }}</h2>
+        <p>{{ cta.description }}</p>
         <div class="cta-seasons">
           <button
             v-for="item in seasonCards"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import homeData from '../../data/home.json'
 
 const sectionRef = ref<HTMLElement | null>(null)
 const visible = ref(false)
@@ -16,38 +17,24 @@ onMounted(() => {
 })
 onUnmounted(() => window.removeEventListener('scroll', check))
 
-const stats = [
-  { value: '5+', label: '年经验' },
-  { value: '30+', label: '完成项目' },
-  { value: '10+', label: '技术栈' },
-  { value: '∞', label: '学习热情' },
-]
+const about = homeData.about
 </script>
 
 <template>
   <section id="about" ref="sectionRef" class="about" :class="{ visible }">
     <div class="container">
       <div class="section-header">
-        <span class="tag">关于我</span>
-        <h2>了解我的故事</h2>
+        <span class="tag">{{ about.tag }}</span>
+        <h2>{{ about.title }}</h2>
       </div>
       <div class="about-grid">
         <div class="about-text">
-          <p>
-            我是一名充满热情的全栈开发者，拥有多年的软件开发经验。
-            从前端到后端，从移动应用到云服务，我享受将创意转化为现实的每一个过程。
-          </p>
-          <p>
-            我相信优秀的代码不仅仅是功能的实现，更是艺术的表达。
-            我始终追求简洁、高效、优雅的解决方案，同时注重用户体验和代码质量。
-          </p>
-          <p>
-            在工作之余，我喜欢探索新技术、参与开源项目、阅读技术博客，
-            并热衷于与社区分享自己的心得和经验。
+          <p v-for="paragraph in about.paragraphs" :key="paragraph">
+            {{ paragraph }}
           </p>
         </div>
         <div class="stats-grid">
-          <div v-for="stat in stats" :key="stat.label" class="stat-card">
+          <div v-for="stat in about.stats" :key="stat.label" class="stat-card">
             <span class="stat-value">{{ stat.value }}</span>
             <span class="stat-label">{{ stat.label }}</span>
           </div>
