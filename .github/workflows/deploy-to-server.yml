@@ -43,6 +43,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VITE_ROUTER_MODE=history
+            VITE_AMAP_KEY=${{ secrets.VITE_AMAP_KEY }}
+            VITE_AMAP_SECURITY_CODE=${{ secrets.VITE_AMAP_SECURITY_CODE }}
 
       - name: Trigger remote deployment
         uses: appleboy/ssh-action@v1.2.0
