@@ -17,10 +17,31 @@ permissions:
   pull-requests: read
 
 jobs:
+  config:
+    name: Read CI config
+    runs-on: ubuntu-latest
+    outputs:
+      sonarcloud_enabled: ${{ steps.config.outputs.sonarcloud_enabled }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read SonarCloud switch
+        id: config
+        shell: bash
+        run: |
+          set -euo pipefail
+          source .github/ci-config.env
+          echo "sonarcloud_enabled=${SONARCLOUD_ENABLED:-true}" >> "$GITHUB_OUTPUT"
+
   sonarcloud-analysis:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    needs: config
+    if: >
+      needs.config.outputs.sonarcloud_enabled == 'true' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
 
     steps:
       - name: Checkout code
@@ -48,9 +69,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v7
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: Check SonarCloud Quality Gate
-        uses: SonarSource/sonarqube-quality-gate-action@v1
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=300
