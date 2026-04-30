@@ -11,7 +11,14 @@
       <div class="divider" />
       <div class="footer-bottom">
         <p>&copy; {{ new Date().getFullYear() }} 云边缘. All rights reserved.</p>
-        <p class="tech">Built with Vue 3 + Vite ⚡</p>
+        <a
+          class="icp-link"
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          浙ICP备2026027255号-1
+        </a>
       </div>
     </div>
   </footer>
@@ -79,8 +86,14 @@
   font-size: 0.85rem;
 }
 
-.tech {
+.icp-link {
   color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.icp-link:hover {
+  color: var(--text-primary);
 }
 
 @media (max-width: 768px) {

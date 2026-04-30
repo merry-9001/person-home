@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       sonarcloud_enabled: ${{ steps.config.outputs.sonarcloud_enabled }}
+      sentry_enabled: ${{ steps.config.outputs.sentry_enabled }}
 
     steps:
       - name: Checkout source repo
@@ -25,13 +26,14 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
-      - name: Read SonarCloud switch
+      - name: Read CI switches
         id: config
         shell: bash
         run: |
           set -euo pipefail
           source .github/ci-config.env
           echo "sonarcloud_enabled=${SONARCLOUD_ENABLED:-true}" >> "$GITHUB_OUTPUT"
+          echo "sentry_enabled=${SENTRY_ENABLED:-true}" >> "$GITHUB_OUTPUT"
 
   build-and-push:
     runs-on: ubuntu-latest
@@ -59,16 +61,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
 
       - name: Build project
         env:
           VITE_ROUTER_MODE: hash
           VITE_AMAP_KEY: ${{ secrets.VITE_AMAP_KEY }}
           VITE_AMAP_SECURITY_CODE: ${{ secrets.VITE_AMAP_SECURITY_CODE }}
-        run: npm run build
+          VITE_SENTRY_DSN: ${{ needs.config.outputs.sentry_enabled == 'true' && secrets.VITE_SENTRY_DSN || '' }}
+          VITE_SENTRY_ENVIRONMENT: production
+          VITE_SENTRY_RELEASE: ${{ github.event.workflow_run.head_sha || github.sha }}
+          SENTRY_AUTH_TOKEN: ${{ needs.config.outputs.sentry_enabled == 'true' && secrets.SENTRY_AUTH_TOKEN || '' }}
+          SENTRY_ORG: ${{ needs.config.outputs.sentry_enabled == 'true' && secrets.SENTRY_ORG || '' }}
+          SENTRY_PROJECT: ${{ needs.config.outputs.sentry_enabled == 'true' && secrets.SENTRY_PROJECT || '' }}
+          SENTRY_RELEASE: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          corepack enable
+          pnpm build
 
       - name: Clone target repo
         run: |
