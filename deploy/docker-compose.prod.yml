@@ -1,7 +1,7 @@
 services:
   person-home:
     container_name: person-home
-    image: ${APP_IMAGE:-your-dockerhub-username/person-home:latest}
+    image: ccr.ccs.tencentyun.com/person-home/person-home:latest
     ports:
       - "8081:80"
     restart: unless-stopped
