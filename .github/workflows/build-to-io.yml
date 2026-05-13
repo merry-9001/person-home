@@ -47,6 +47,9 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
+      # setup-node 的 cache: pnpm 会执行 pnpm，须先安装 pnpm（不能仅靠下一步的 corepack）
+      - uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -54,9 +57,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: |
-          corepack enable
-          pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build project
         env:
@@ -70,9 +71,7 @@ jobs:
           SENTRY_ORG: ${{ needs.config.outputs.sentry_enabled == 'true' && secrets.SENTRY_ORG || '' }}
           SENTRY_PROJECT: ${{ needs.config.outputs.sentry_enabled == 'true' && secrets.SENTRY_PROJECT || '' }}
           SENTRY_RELEASE: ${{ github.event.workflow_run.head_sha || github.sha }}
-        run: |
-          corepack enable
-          pnpm build
+        run: pnpm build
 
       - name: Clone target repo
         run: |
