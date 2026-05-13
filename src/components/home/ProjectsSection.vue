@@ -2,10 +2,13 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import homeData from '../../data/home.json'
 
+/** 内网：仅 dev 或 VITE_DEPLOY_TO_SERVER；GitHub Pages 构建保持 home.json 的 Vercel 地址 */
 function resolveProjectLink(link: string): string {
-  if (import.meta.env.VITE_DEPLOY_TO_SERVER !== 'true') return link
-  if (link === 'https://person-low-code.vercel.app/#/') return 'https://code.ykuai.site/#/'
-  if (link === 'https://person-bpmn.vercel.app/') return 'https://bpmn.ykuai.site/'
+  const useInternal =
+    import.meta.env.DEV || import.meta.env.VITE_DEPLOY_TO_SERVER === 'true'
+  if (!useInternal) return link
+  if (link === 'https://person-low-code.vercel.app/#/') return 'http://code.ykuai.site/'
+  if (link === 'https://person-bpmn.vercel.app/') return 'http://bpmn.ykuai.site/'
   return link
 }
 
@@ -41,10 +44,13 @@ onUnmounted(() => window.removeEventListener('scroll', check))
         <h2>{{ projects.title }}</h2>
       </div>
       <div class="projects-grid">
-        <article
+        <a
           v-for="(p, i) in projects.items"
           :key="p.title"
+          :href="p.link"
           class="project-card"
+          target="_blank"
+          rel="noopener noreferrer"
           :style="{ transitionDelay: `${i * 0.12 + 0.2}s` }"
         >
           <div class="card-accent" :style="{ background: p.color }" />
@@ -57,16 +63,9 @@ onUnmounted(() => window.removeEventListener('scroll', check))
             </div>
           </div>
           <div class="card-footer">
-            <a
-              :href="p.link"
-              class="card-link"
-              target="_blank"
-              rel="noopener"
-            >
-              {{ projects.linkText }}
-            </a>
+            <span class="card-link">{{ projects.linkText }}</span>
           </div>
-        </article>
+        </a>
       </div>
     </div>
   </section>
@@ -130,6 +129,8 @@ onUnmounted(() => window.removeEventListener('scroll', check))
   transform: translateY(20px);
   transition: all 0.6s ease;
   cursor: pointer;
+  color: inherit;
+  text-decoration: none;
 }
 
 .projects.visible .project-card {
@@ -199,7 +200,7 @@ onUnmounted(() => window.removeEventListener('scroll', check))
   transition: all 0.3s;
 }
 
-.card-link:hover {
+.project-card:hover .card-link {
   color: var(--accent);
 }
 
