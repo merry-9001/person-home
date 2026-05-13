@@ -1,6 +1,21 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import homeData from '../../data/home.json'
+
+function resolveProjectLink(link: string): string {
+  if (import.meta.env.VITE_DEPLOY_TO_SERVER !== 'true') return link
+  if (link === 'https://person-low-code.vercel.app/#/') return 'https://code.ykuai.site/#/'
+  if (link === 'https://person-bpmn.vercel.app/') return 'https://bpmn.ykuai.site/'
+  return link
+}
+
+const projects = computed(() => ({
+  ...homeData.projects,
+  items: homeData.projects.items.map((p) => ({
+    ...p,
+    link: resolveProjectLink(p.link),
+  })),
+}))
 
 const sectionRef = ref<HTMLElement | null>(null)
 const visible = ref(false)
@@ -16,8 +31,6 @@ onMounted(() => {
   window.addEventListener('scroll', check, { passive: true })
 })
 onUnmounted(() => window.removeEventListener('scroll', check))
-
-const projects = homeData.projects
 </script>
 
 <template>

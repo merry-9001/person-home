@@ -82,6 +82,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VITE_ROUTER_MODE=history
+            VITE_DEPLOY_TO_SERVER=true
             VITE_AMAP_KEY=${{ secrets.VITE_AMAP_KEY }}
             VITE_AMAP_SECURITY_CODE=${{ secrets.VITE_AMAP_SECURITY_CODE }}
             VITE_SENTRY_DSN=${{ needs.config.outputs.sentry_enabled == 'true' && secrets.VITE_SENTRY_DSN || '' }}
