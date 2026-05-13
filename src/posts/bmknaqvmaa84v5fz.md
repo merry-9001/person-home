@@ -27,9 +27,7 @@ categories: []
 
 ![](articles/bmknaqvmaa84v5fz/1743822492787-dfb54b3a-ca29-414a-9894-b95064b825e0.png)
 
-## monorepo
-
-一个仓库，多个包混合
+monorepo就是一个仓库，多个包混合
 
 ### 优势
 
@@ -70,15 +68,50 @@ categories: []
 | 依赖管理 | 共同依赖可提升至root，版本控制更加容易，依赖管理更加方便              | 不同项目中会存在相同的依赖，并且依赖会存在版本不同的情况 |
 | 代码管理 | 代码全在一个仓库，项目太大用 git 管理会存在问题，无法隔离项目代码权限 | 各个团队可以控制代码权限，也几乎不会有项目太大的问题     |
 
-# 搭建monorepo
+# 使用方式
 
-## 采用pnpm+workspace的方式
+## pnpm+workspace
 
 workspace(工作空间)：工作空间就是一个管理多个包的环境，它通过独特的依赖管理方式极大地提高了效率。pnpm 的工作空间支持符号链接和硬链接机制，使得不同包之间能够高效地共享依赖，同时保证每个包的独立性。
 
-## 使用
+有了pnpm+workspace后，一些都需要的依赖就可以装在workspace中统一管理
 
-1.根目录下创建pnpm-workspace.yaml文件,确定workspace的应用空间
+外层的package.json用来依赖一些架构层面的东西比如vite typescript vue-tsc等等（这些也是公共的，内层可以不用在package.json中定义）
+
+内层的package.json一般依赖axios，vue，单独管理。（调用内层的script时他也能读到外层的node_modules）
+
+## 一般结构
+
+```plain
+person-monorepo/
+  apps/
+    web/          React + Vite 前端应用
+    api/          NestJS 后端应用
+
+  packages/
+    components/   共享 React 组件库
+    utils/        共享工具函数和类型
+
+  package.json
+  pnpm-workspace.yaml
+  pnpm-lock.yaml
+  tsconfig.base.json
+  node_modules/
+```
+
+核心分工：
+
+- `<font style="background-color:rgba(255, 255, 255, 0.1);">apps/*</font>`：真正会启动、部署、运行的应用。
+- `<font style="background-color:rgba(255, 255, 255, 0.1);">packages/*</font>`：被应用引用的共享包。
+- 根目录：管理整个 workspace 的依赖、脚本、锁文件和公共配置。
+
+也就是说，`<font style="background-color:rgba(255, 255, 255, 0.1);">apps/web</font>` 和 `<font style="background-color:rgba(255, 255, 255, 0.1);">apps/api</font>` 是产品应用，`<font style="background-color:rgba(255, 255, 255, 0.1);">packages/components</font>` 和 `<font style="background-color:rgba(255, 255, 255, 0.1);">packages/utils</font>` 是内部 npm 包。
+
+注意：pnpm-lock.yaml只会在根目录，整个仓库共用一份 pnpm-lock.yaml，包内的依赖关系会被放到根目录来处理
+
+![](articles/bmknaqvmaa84v5fz/1777540173101-d8c55c78-422d-4e3e-b8c7-37e8d2412873.png)
+
+## pnpm-workspace.yaml（确定workspace的应用空间）
 
 ```javascript
 packages:
@@ -90,149 +123,120 @@ packages:
   - '!**/test/**'
 ```
 
-如果需要将依赖到工作空间里面
+## 把依赖安装到 workspace 根目录（root package.json）
 
 ```markdown
 pnpm add <包名> -w
 ```
 
-如果需要安装工作空间中导出的依赖
+## 安装工作空间中导出的依赖
 
 ```markdown
 pnpm add <包名B> --workspace --filter <包名A>
+
+--filter <包名A> //只在 包 A 上执行这条命令
+--workspace //优先使用 workspace 内的包（如果有的话）
 ```
 
-包名就是package.json中的name字段
+> 包名就是package.json中的name字段
 
-有了pnpm+workspace后，一些都需要的依赖就可以装在workspace中统一管理
-
-项目结构
-
-![](articles/bmknaqvmaa84v5fz/1743823345062-43ff61b3-fcb2-4c03-87ac-2bd6fe25d697.png)
-
-2.注意库文件需要在package.json中指定入口
+这个依赖不是从 npm 下载的，而是直接使用当前 monorepo 里的本地包。
 
 ```json
 {
-  "name": "tools",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "type": "module",
-  "types": "dist/types/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "scripts": {
-    "test": "vitest",
-    "build": "rollup -c"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
-}
-```
-
-# vite打包库模式
-
-**库模式**
-
-库模式指的是将应用打包成一个依赖库，方便其他应用来使用。因此和普通打包是有一定区别的：
-
-1. 入口文件：
-   - 普通应用：html 文件
-   - 库模式：不包含 html 文件，入口文件是一个 js 文件
-2. 输出格式：
-   - 普通应用：一般是浏览器环境
-   - 库模式：通常需要支持多种模块系统
-3. 外部依赖：
-   - 普通应用：需要一起打包进去
-   - 库模式：通常需要将外部依赖（vue、react）排除掉
-
-在库模式（lib）中，我们可以定义**入口点**、**库的名称**、**输出文件名**，以及**如何处理外部依赖**。这些配置确保你的库被打包成适用于不同消费场景的格式，如 ES 模块或 UMD 格式。
-
-举一个例子：
-
-```plain
-my-lib/
-├── lib/
-│   ├── main.js        // 库的入口文件
-│   ├── Foo.vue        // Vue 组件
-│   └── Bar.vue        // 另一个 Vue 组件
-├── index.html         // 用于开发测试的 HTML 文件
-├── package.json
-└── vite.config.js     // Vite 配置文件
-```
-
-**Vite 配置文件 (vite.config.js)**
-
-```javascript
-// vite.config.js
-import { resolve } from "path";
-import { defineConfig } from "vite";
-
-export default defineConfig({
-  build: {
-    lib: {
-      entry: resolve(__dirname, "lib/main.js"),
-      name: "MyLib",
-      fileName: (format) => `my-lib.${format}.js`,
-    },
-    rollupOptions: {
-      external: ["vue"],
-      output: {
-        globals: {
-          vue: "Vue",
-        },
-      },
-    },
-  },
-});
-```
-
-- entry: 指定库的入口文件。
-- name: name 是用来指定你的库在 UMD 和 IIFE 构建格式下的全局变量名称。
-  - 当你的库被加载时，如果是在一个没有模块系统的环境（例如直接在浏览器中通过 <script> 标签引入），这个名称将成为全局变量，通过这个名称可以访问到你的库。
-  - 如果你设置 name: 'MyLib'，在浏览器环境中加载时，可以通过 window.MyLib 访问到你的库。
-- fileName: 输出文件的命名规则。
-- external: 告诉 rollup 不要将 Vue 打包进库，因为我们假设用户环境已有 Vue。
-- globals: globals 用于指定外部依赖在 UMD 和 IIFE 构建格式下的全局变量名称。
-  - 当你的库依赖某些外部库（如 Vue），你需要告诉构建工具这些库在目标环境中的全局变量名称，以确保在没有模块系统的环境中正确引用这些依赖。
-  - 如果你的库依赖 vue，并且 globals 中配置了 vue: 'Vue'，在目标环境中，你的库会假定 Vue 是一个已经存在的全局变量。
-
-**构建输出**
-
-执行 vite build 后，输出目录可能如下所示：
-
-```plain
-my-lib/
-├── dist/
-│   ├── my-lib.es.js        // ES 模块格式
-│   ├── my-lib.umd.js       // UMD 格式
-│   └── assets/             // 包含所有静态资源，如编译后的 CSS
-└── ...
-```
-
-**package.json 配置**
-
-```json
-{
-  "name": "my-lib",
-  "type": "module",
-  "files": ["dist"],
-  "main": "./dist/my-lib.umd.js",
-  "module": "./dist/my-lib.es.js",
-  "exports": {
-    ".": {
-      "import": "./dist/my-lib.es.js",
-      "require": "./dist/my-lib.umd.js"
-    }
+  "dependencies": {
+    "@repo/utils": "workspace:*"
   }
 }
 ```
 
-这里的配置确保了无论是使用 require 还是 import，使用者都能正确地加载到适当格式的文件。
+## 命令
+
+| 对比点       | `-w`   | `--filter` |
+| ------------ | ------ | ---------- |
+| 安装位置     | root   | 指定子包   |
+| package.json | 根目录 | 子包       |
+| 使用场景     | 工具链 | 业务依赖   |
+| 是否精确控制 | ❌     | ✅         |
+
+## 脚本
+
+`--parallel` = **并行执行**
+
+`**--filter**`**= 筛选包 **
+
+**-r = recursive 递归执行（按依赖顺序执行）**
+
+```json
+{
+  "scripts": {
+    "dev": "pnpm --parallel --filter @repo/web --filter @repo/api dev",
+    "dev:web": "pnpm --filter @repo/web dev",
+    "dev:api": "pnpm --filter @repo/api dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  }
+}
+```
+
+## turbo
+
+pnpm workspace：包管理、依赖安装、本地包链接
+
+Turbo：任务编排、依赖顺序、增量构建、缓存复用
+
+项目不用 Turbo 也能跑，因为用 pnpm filter 和 pnpm recursive也可以完成调度。
+
+但当项目变大以后，Turbo 会更有价值。
+
+例如：
+
+- 只重新构建变更影响到的包。
+- 缓存上一次 build/typecheck/lint 的结果。
+- 自动按照依赖图决定构建顺序。
+- CI 里减少重复构建时间。
+
+turbo.json
+
+```markdown
+{
+"$schema": "https://turbo.build/schema.json", // turbo 配置的 JSON schema，用于编辑器提示和校验（可有可无，但推荐加）
+
+"tasks": {
+"build": {
+"dependsOn": ["^build"], // 关键：在执行当前包 build 前，先执行“依赖它的包”的 build（按依赖拓扑顺序）
+"outputs": ["dist/**"] // 指定 build 产物目录（告诉 turbo 哪些文件可以被缓存）
+},
+
+    "typecheck": {
+      "dependsOn": ["^typecheck"], // 类型检查也按依赖顺序执行（先检查依赖包，再检查当前包）
+      "outputs": [] // 没有产物（只是检查），但 turbo 仍然可以基于输入做缓存
+    },
+
+    "lint": {
+      "outputs": [] // lint 没有产物，不需要缓存文件（只是检查代码规范）
+    },
+
+    "dev": {
+      "cache": false, // dev 不参与缓存（开发服务器是实时运行的，缓存没意义）
+      "persistent": true // 标记为“常驻进程”（比如 vite dev / node dev，不会自动结束）
+    }
+
+}
+}
+```
+
+```json
+{
+  "scripts": {
+    "dev": "turbo dev --filter=@repo/web --filter=@repo/api",
+    "dev:web": "turbo dev --filter=@repo/web",
+    "dev:api": "turbo dev --filter=@repo/api",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "format": "prettier --write /"**/*.{ts,tsx,js,json,md,css}/""
+  }
+}
+```

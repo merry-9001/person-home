@@ -98,13 +98,17 @@ const formatMarkdown = (() => {
  * @return {String} text
  */
 module.exports = async function (post) {
+  const tags = post.tags?.map((item) => item.title) || []
+  if (!tags.includes('博客文章')) {
+    return null
+  }
+
   // matter 解析
   const parseRet = parseMatter(post.body)
   const { body, ...data } = parseRet
   const { title, slug: urlname, created_at, description, cover } = post
   const raw = await formatRaw(body)
   const date = data.date || formatDate(created_at)
-  const tags = post.tags?.map(item => item.title) || []
   const categories = data.categories || []
   const props = {
     title: title.replace(/"/g, ''), // 临时去掉标题中的引号，至少保证文章页面是正常可访问的

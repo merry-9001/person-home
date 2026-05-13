@@ -9,6 +9,9 @@ lerna-debug.log*
 
 node_modules
 dist
+
+# 语雀同步缓存（仅 `pnpm yuque` 使用；前端构建与运行不读此文件）
+yuque.json
 dist-ssr
 *.local
 

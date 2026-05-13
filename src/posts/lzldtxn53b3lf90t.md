@@ -5,8 +5,8 @@ date: 2025-04-28 11:19:14 +0800
 tags:
   - 博客文章
 description: 介绍类似于一个编译器，可以将样式源码编译成最终的CSS代码postcss对标babel我们写的js代码(怎么爽怎么来) --&gt;
-  babel --&gt; 将最新的ts语法进行转换js语法 --&gt; 做一次语法降级  --&gt;
-  浏览器客户端去执行我们写的css代码(怎么爽怎么来) --&gt; less编译（解...
+  babel --&gt; 将最新的ts语法进行转换js语法 --&gt; 做一次语法降级 --&gt; 浏览器客户端去执行我们写的css代码(怎么爽怎么来)
+  --&gt; less编译（解开...
 image: ''
 categories: []
 ---

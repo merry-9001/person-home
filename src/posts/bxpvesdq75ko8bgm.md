@@ -1,11 +1,12 @@
 ---
-title: ai模型
+title: ai基础概念
 urlname: bxpvesdq75ko8bgm
 date: 2026-02-11 18:25:01 +0800
-tags: []
-description: 概念AI：Artificial Intelligence 任何能够让机器模仿人类行为的技术LLM： 英文全称为 Large
-  Language Model，中文称之为“大语言模型”LLM是AI的一个分支LLM就是用海量数据喂饱、超大规模参数堆起来的、基于 Transformer
-  架构的 “终极文...
+tags:
+  - 博客文章
+description: 概念AI：Artificial Intelligence 任何能够让机器模仿人类行为的技术AIGC：Artificial
+  Intelligence Generated Content 人工智能生成内容token：
+  是文本被拆分后的最小处理单位，模型靠它来理解和生成语言（输入输出都会消耗toke...
 image: articles/bxpvesdq75ko8bgm/1771491899229-55d9aaf4-35f3-497b-8661-6f543d09fc0e.png
 categories: []
 ---
@@ -13,6 +14,10 @@ categories: []
 ## 概念
 
 AI：Artificial Intelligence 任何能够让机器模仿人类行为的技术
+
+AIGC：Artificial Intelligence Generated Content 人工智能生成内容
+
+token： 是文本被拆分后的最小处理单位，模型靠它来理解和生成语言（输入输出都会消耗token）
 
 LLM： 英文全称为 Large Language Model，中文称之为“大语言模型”
 
@@ -23,8 +28,6 @@ LLM： 英文全称为 Large Language Model，中文称之为“大语言模型�
 机器学习（ML，Machine Learning）：人类不直接给出决策规则，通过一套算法，让系统能够根据示例自己去学习，自己来做出决策。
 
 深度学习（DL， <font style="color:rgb(0, 0, 0);background-color:rgba(0, 0, 0, 0);">Deep Learning</font>）：机器学习下的一个分支，这是一种**受到人脑神经系统的启发而发展出来的一种机器学习方法**。通过**多层**神经网络来自动从数据中学习特征和模式，尤其擅长处理图像、语音、文本等高维、复杂的数据。
-
-> 这里仅仅是受到人脑神经的启发，不等价于复制了整个人脑
 
 多层：输入层 --> 隐藏层1 ---> 隐藏层2 .... ---> 输出层
 
@@ -129,6 +132,16 @@ Sequences of characters commonly found next to each other may be grouped togethe
 可参与数学运算：词向量支持加减
 
 输入给神经网络：向量可计算梯度
+
+### 方法
+
+Word2Vec：文本、文字 TO Vec（向量那个单词的缩写）
+
+两种训练方式：
+
+CBOW模型（给定一个词的上下文（前后词），预测中心词（目标词））
+
+Skip-Gram模型（给定中心词，预测它的上下文词）
 
 ## Transformer架构
 

@@ -2,15 +2,150 @@
 title: ai应用
 urlname: pc5cnm5r2ga4sq4b
 date: 2026-02-21 16:57:42 +0800
-tags: []
-description: 概念api调用或者本地部署（ollama）的常见结构Ollama 提供了丰富的模型选型ollama
-  list：查看已下载模型ollama show ：显示模型信息ollama pull ：拉取模型ollama run
-  ：拉取并且运行模型存在：直接运行模型不存...
-image: articles/pc5cnm5r2ga4sq4b/1771664312456-ee6bb615-73a7-47dd-9ecd-77d15128bfa9.png
+tags:
+  - 博客文章
+description: cc
+  switchai技术认知无论是模型服务还是ai应用，只能玩两个东西1.输入什么给模型加一些提示词加一些mcp,skill......2.如何处理模型的输出可能会加一些提示词，继续提问模型可能做一些格式处理可能做函数
+image: https://cdn.nlark.com/yuque/0/2026/png/22718987/1776075473763-09936d69-84ce-4212-9d73-e8c5d58dc241.png
 categories: []
 ---
 
-## 概念
+cc switch
+
+## ai技术认知
+
+无论是模型服务还是ai应用，只能玩两个东西
+
+1.输入什么给模型
+
+加一些提示词
+
+加一些mcp,skill
+
+......
+
+2.如何处理模型的输出
+
+可能会加一些提示词，继续提问模型
+
+可能做一些格式处理
+
+可能做函数调用
+
+.......
+
+上层调用下层
+
+### 用户
+
+使用ai应用
+
+### ai应用
+
+应用开发（Agent）：调用模型服务的接口，做一个具体有价值的ai工具
+
+要学习的东西：概念，skill，tool，mcp，LangChain，LangGraph
+
+工具使用：概念，具体工具使用（claude Code，Codex）
+
+运行过程：
+
+1.连接初始化(告诉模型我有哪些技能，但不是把全部内容给模型)
+
+2.当用户触发关键词的时候才会使用技能，然后再次调用模型，传入技能全文
+
+![](articles/pc5cnm5r2ga4sq4b/1775443711879-3df4dcae-7464-4199-b536-35bcc6c9fe34.png)
+
+> 注意：mcp，skill这些工具可以在ai应用层处理，当然模型服务接口也会提供这些处理
+
+### 模型服务
+
+模型服务：API接口/SDK，temperature，top_k，top_p
+
+输入：自然语言
+
+输出：自然语言
+
+![](articles/pc5cnm5r2ga4sq4b/1775441925399-5b5e86f4-200d-4db8-9452-71fb39637c7b.png)
+
+前处理：
+
+身份/权限认证
+
+提示词注入
+
+tokenization 分词 token化
+
+自回归：调用模型
+
+```javascript
+// 模拟：之前 tokenization（分词）的结果，比如用户输入的 prompt 转成的 token ID 数组
+const input: number[] = [/* ...... */];
+
+// 存储最终生成的输出 token 序列
+const output: number[] = [];
+
+// 自回归生成循环：逐 token 生成，直到遇到结束符
+while (true) {
+    // 1. 用原始模型根据当前输入序列，计算下一个 token 的概率分布
+    // raw_model 通常是大模型的前向推理（forward pass），输入是当前上下文，输出是 vocab 维度的 logits/prob
+    const prob: number[] = raw_model(input);
+
+    // 2. 根据概率分布 + 采样策略（如贪心、Top-k/Top-p、温度采样），选择下一个 token
+    const token: number = pickToken(prob, {
+        temperature: 0.7, // 温度参数，控制随机性
+        top_p: 0.9,       // 核采样参数
+        // 其他采样配置...
+    });
+
+    // 3. 检查是否为结束 token（如 <|endoftext|>、EOS 等），是则终止生成
+    if (isOver(token)) {
+        break;
+    }
+
+    // 4. 将生成的 token 加入输出序列
+    output.push(token);
+    // 5. 【关键】将新生成的 token 追加到输入序列，作为下一轮生成的上下文
+    input.push(token);
+}
+```
+
+后处理：
+
+detokenization 把token变成自然语言
+
+合规性检查
+
+### 裸模型
+
+裸模型：GPT5.2，Kimi，Gemini（注意力机制，KV-Cache，上下窗口）
+
+输入：token List
+
+```javascript
+[3, 6.99, 15];
+```
+
+输出：概率分布（下一个token的概率分布）
+
+```javascript
+{
+  15:0.7,
+  222:0.1
+}
+```
+
+处理过程：裸模型调用权重矩阵，本地部署模型的时候，要把模型下载到本地，实际部署的是权重矩阵（本质是一串数字），比如transfomer架构，本质就是用transfomer架构里面有一些函数去调用这个矩阵
+
+> 注意：transfomer训练出来的矩阵，要用transfomer函数去调用
+
+大模型本质上就是一个纯函数
+
+![](articles/pc5cnm5r2ga4sq4b/1775441395980-d948d646-0ba4-43c3-9c9f-ad8937b4c1ab.png)
+
+多模态：本质上无论输入的是什么，都会转化为token list，输出的话还是一个概率分布，只不过输出的东西可能对应的是一个像素点信息，一个文字，或者视频的一帧
+
+## 模型调用方式
 
 api调用或者本地部署（ollama）的常见结构
 
@@ -372,7 +507,15 @@ router.post("/clear", function (req, res) {
 module.exports = router;
 ```
 
-## FunctionCalling
+## FunctionCalling（调用工具）
+
+Function Calling 是大模型的能力：让 AI 理解外部工具 / 自定义函数的描述，自动判断「什么时候该调用、传什么参数、怎么接收返回结果」，实现大模型 + 外部能力联动。
+
+如何告诉大模型有工具可以调用？
+
+1.直接描述
+
+2.JSON Schema来约束描述方式
 
 如果通过提示词让模型去输出调用工具的话，可能会有的问题：
 
@@ -381,8 +524,6 @@ module.exports = router;
 2. 不标准：每个开发者的提示词的描述千差万别
 
 3. 约束力不高：即便使用了语气最重的提示词，大模型的底层原理决定了它总会有不按照要求回复的情况
-
-Function Calling，通过 JSON Schema 格式来进行标准化的输入，以及标准化的输出
 
 输入
 
@@ -406,7 +547,7 @@ const tools = [
 ];
 
 // 多传入一个参数
-const response = await callLLM(messages, toolList, (chunk) => {
+const response = await callLLM(messages, tools, (chunk) => {
   res.write(`${JSON.stringify({ response: chunk })}/n`);
 });
 
@@ -502,13 +643,13 @@ if (response.tool_calls) {
 
 ## mcp
 
+mcp扩充了ai应用程序的边界
+
 ### 协议层面
 
-**MCP是一套 标准协议，它规定了应用程序之间 如何通信**
+**MCP是一套标准协议，它规定了应用程序之间 如何通信**
 
-如何通信：
-
-通信方式
+**通信方式**
 
 stdio： 推荐，高效、简洁、本地
 
@@ -518,9 +659,11 @@ StreamHTTP
 
 SSE
 
-通信格式： 基于JSON-RPC的进一步规范
+> 一般都会使用stdio通信方式，因为绝大多数mcp服务器是运行在本地的(因为需要操作本地电脑写文件等等，操作当前计算机)
 
-json-rpc
+**通信格式**： 基于JSON-RPC的进一步规范
+
+json-rpc格式示例：
 
 request
 
@@ -576,11 +719,17 @@ MCP 支持 3 种上下文能力：
 
 无论是工具、资源、提示词，这些信息最终都会作为上下文的一部分，提供给大模型。也就是说，大模型是最终信息的消费者。
 
+应用场景
+
+效能工具：AISC（ai安全检查），AISC（单元测试），AICR（代码审查）
+
 ### 完整流程
 
-MCP Host: 往往指代AI应用本身，用于发现MCP Server以及其中的工具列表
+MCP Host: 往往指代AI应用本身，用于发现MCP Server以及其中的工具列表（配置，禁用，启动mcp服务器）
 
 MCP Client： 用于和MCP Server通信的客户端，往往在Host内部开启，通常情况下，每启动一个MCP Server，就会开启一个MCP Client
+
+![](articles/pc5cnm5r2ga4sq4b/1775364791839-f113539f-148b-415a-9407-8feb594a571d.png)
 
 1. 在Claude Desk 中打开一个新的聊天窗口
 
@@ -600,233 +749,103 @@ MCP Client： 用于和MCP Server通信的客户端，往往在Host内部开启�
 
 ![](articles/pc5cnm5r2ga4sq4b/1772264980977-f5c5e326-b459-4bec-a480-78d19f9b309a.png)
 
-## 大模型幻觉
+ai应用会自主解决怎么调用，什么时候来调用mcp服务器
 
-为什么会出现大模型幻觉？
-
-1. 基于统计学习：你给它相应的语料库，它根据你提供的语料库进行学习
-
-2. 训练数据不完整或有偏差
-
-3. 对人类提问的“补全压力”
-
-如何解决大模型幻觉？
-
-1. 提示词工程
-
-2. RAG - 外挂知识库
-
-3. 大模型微调
-
-## <font style="color:rgb(38, 38, 38);">提示词工程</font>
-
-<font style="color:rgb(38, 38, 38);">通过反馈迭代优化，rct构词法，技巧语言来让模型提供更精确的答案</font>
-
-## Rag
-
-全称 Retrieval-Augmented Generation，中文：检索增强生成
-
-![](articles/pc5cnm5r2ga4sq4b/1772272927813-6534b608-9ae4-42ec-ab35-e56215daaf6d.png)
-
-解决的问题：
-
-1. 受限于已有知识库，无法快速新增语料信息
-2. 重新训练大模型需要很长的时间
-
-### rag应用架构（原理）
-
-1. 数据索引（Data Indexing）
-2. 数据查询（Query）
-   1. 检索（Retrieval）
-   2. 生成（Generation）
-
-#### 数据索引
-
-1. 加载文档
-2. 切分成 chunks
-3. 转化为向量嵌入
-4. 存入向量数据库
-
-![](articles/pc5cnm5r2ga4sq4b/1772275113483-4dac357b-680e-4f7e-aaaf-ec159f64b145.png)
-
-#### 数据查询
-
-检索
-
-1. 将 Query（用户的问题） 转化为向量
-2. 在向量数据库中进行相似度检索（语义检索），相似度的检索，有几种方式
-   1. **余弦相似度**
-   2. 欧氏距离
-   3. 点积
-3. 为生成阶段准备检索结果
-
-生成
-
-![](articles/pc5cnm5r2ga4sq4b/1772275034401-746579df-aa65-4508-808d-c7de5820b1a3.png)
-
-### 代码层面（实现）
+cursor里面配置mcp服务器
 
 ```javascript
-/**
- * 将外挂知识库生成对应的向量
- */
-async function generateEmbeddings() {
-  // 1. 加载外挂知识库
-  const buffer = fs.readFileSync("./香蕉手机参数配置.pdf");
-  const data = await pdfParse(buffer);
-
-  // 2. 接下来需要对文档进行一个切割
-  const paragraphs = data.text
-    .split(//n/s*/n/)
-    .map((text, idx) => ({
-      id: `chunk-${idx}`,
-      content: text.trim(),
-    }))
-    .filter((p) => p.content.length > 20);
-
-  // 3. 将每一块转换为向量
-  const withEmbedding = []; // 存储最终转为向量的结果
-  for (const p of paragraphs) {
-    const embedding = await getEmbedding(p.content);
-    withEmbedding.push({
-      ...p,
-      embedding,
-    });
-  }
-
-  // 4. 存储到向量数据库
-  // 我们这个案例是直接写入到 embeddings.json 文件里面
-  fs.writeFileSync(
-    EMBEDDING_PATH,
-    JSON.stringify(withEmbedding, null, 2),
-    "utf8",
-  );
-
-  console.log(
-    `生成了 ${withEmbedding.length} 条段落嵌入，并已缓存到 ${EMBEDDING_PATH}`,
-  );
-
-  return withEmbedding;
-}
-
-// 加载已经生成好的向量数据内容
-async function loadCachedEmbeddings() {
-  if (fs.existsSync(EMBEDDING_PATH)) {
-    // 说明之前外挂知识库已经生成过对应的向量数据
-    // 直接读取即可
-    const raw = fs.readFileSync(EMBEDDING_PATH, "utf8");
-    return JSON.parse(raw);
-  } else {
-    // 说明外挂的知识库还没有生成对应的向量数据
-    return await generateEmbeddings();
+{
+  "mcpServers": {
+    "MCP测试服务器": {
+      "command": "node", //最好找到node的绝对路径
+      "args": ["src/server.js"] //最好找到服务器的绝对路径
+    }
   }
 }
 ```
 
-```markdown
-router.post("/ask", async (req, res) => {
-// 做一个外挂知识库的准备，拿到外挂知识库所对应的向量数据
-const embeddedDocs = await loadCachedEmbeddings();
+如何使用别人的mcp服务器
 
-// 拿到用户的问题
-const question = req.body.question || "";
+发布包到npm，别人可以使用npx来使用
 
-// 需要将用户的问题放到向量数据库里面进行所有
-const relevantDocs = await searchByEmbedding(question, embeddedDocs);
-
-let userMessage = question;
-
-// 接下来需要对应用户的问题进行一个评判
-// 看一下用户的问题是否和外挂知识库的内容相关
-// 目前，每一个块儿都有一个得分，所有的块儿的得分大于阀值，说明相关
-const allDocsRelevant =
-relevantDocs.length > 0 &&
-relevantDocs.every((doc) => doc.score > RELEVANCE_THRESHOLD);
-
-if (allDocsRelevant) {
-// 说明用户这一次的问题，是和外挂知识库的内容相关的
-// 需要将外挂知识库中搜索到的内容一起给大模型
-console.log(
-`✅ 知识库相关 - 所有文档得分都超过阈值 ${RELEVANCE_THRESHOLD}`
-);
-console.log(
-`   文档得分: [${relevantDocs
-        .map((doc) => doc.score.toFixed(3))
-        .join(", ")}]`
-);
-
-    // 将相关的知识库内容添加到用户问题中
-    const relevantContent = relevantDocs
-      .filter((doc) => doc.score > RELEVANCE_THRESHOLD)
-      .map((doc) => doc.content)
-      .join("/n/n");
-
-    userMessage = `参考以下资料回答问题：
-
-    ${relevantContent}
-
-    问题：${question}`;
-
-}
-}
-```
-
-## 大模型微调
-
-微调（fine-tuning）：在规模较小的 **特定任务或特定领域数据集** 上对模型进行 **针对性的训练**。
-
-可以从不同的维度分类：
-
-1. 技术维度
-
-全量微调（Full Fine-tuning）
-
-参数高效微调（PEFT，Parameter-Efficient Fine-tuning）
-
-2. 任务维度
-
-指令微调
-
-分类任务微调
-
-指令微调
-
-```markdown
+```javascript
 {
-"instruction": "请判断患者是否存在糖尿病风险，并说明依据。",
-"input": "患者男，45岁，BMI指数29，空腹血糖6.8 mmol/L。",
-"output": "患者可能存在糖尿病前期的风险，建议进一步做 OGTT 检查。"
+  "mcpServers": {
+    "MCP测试服务器": {
+      "command": "/Users/yuanjin/.nvm/versions/node/v20.12.1/bin/node",
+      "args": ["/Users/yuanjin/Desktop/use-sdk/src/server.js"]
+    },
+    "Bazi": {
+      "command": "npx",
+      "args": ["bazi-mcp"]
+    }
+  }
 }
 ```
-
-分类任务微调
-
-```markdown
-{
-"text": "患者男，45岁，BMI指数29，空腹血糖6.8 mmol/L。",
-"label": "糖尿病前期"
-}
-```
-
-**微调** 和 **提示词工程**、**RAG** 之间的区别：
-
-| 项目                 | 微调（Fine-tuning）                            | 提示词工程（Prompt Engineering） | RAG（检索增强生成）                        |
-| -------------------- | ---------------------------------------------- | -------------------------------- | ------------------------------------------ |
-| **定义**             | 基于已有模型，用新数据“训练”一遍以适应特定任务 | 通过设计更优提示词，提高模型表现 | 在生成前引入“外部知识”作为上下文供模型参考 |
-| **是否改动模型参数** | ✅ 会，训练会更新模型权重                      | ❌ 不会，只用原始模型            | ❌ 不会，主要改进数据流                    |
-| **适用场景**         | 高精度、专属领域（如医疗、法律）               | 通用模型适配多任务、快速试验     | 数据频繁更新、文档 QA、知识密集型任务      |
-| **依赖外部数据源**   | 需要少量**高质量**训练数据                     | 可选，通常仅靠提示               | 必须，需要知识库或文档                     |
-| **部署复杂度**       | 较高，需要训练和模型部署                       | 最低，只依赖提示词               | 中等，需接入检索系统（如向量库）           |
-
-> 现在微调使用的很少，因为微调方便，验证你的微调结果好不好却很难，而且微调是跟模型版本绑定的，也就是说一旦模型升级，你的微调必须重新来
->
-> 注意：微调只能在python语言下实现
 
 ## agent functionCall mcp的关系
 
-<font style="color:rgb(38, 38, 38);">agent: node服务器 + 调用大模型  
-</font><font style="color:rgb(38, 38, 38);">自己也可以搭一个node服务器来调用大模型 （想要支持上下文的话，可以存多轮对话，可以使用function Calling）  
+**<font style="color:rgb(38, 38, 38);">agent</font>**<font style="color:rgb(38, 38, 38);">：node服务器 + 调用大模型  
+</font><font style="color:rgb(38, 38, 38);">自己也可以搭一个node服务器来调用大模型 （想要支持上下文的话，可以存多轮对话，可以使用</font>**<font style="color:rgb(38, 38, 38);">（function Calling）</font>**<font style="color:rgb(38, 38, 38);">  
 </font><font style="color:rgb(38, 38, 38);">但是如果想在cursor这个agent服务器中玩上下文的话，就需要mcp协议去进行通信，需要搭一个支持mcp协议输入输出的服务器（agent会自主的根据提示词去决定是否调用你的mcp服务器）  
 </font><font style="color:rgb(38, 38, 38);">其实cursor应用就集成了agent服务器
 
+</font>**<font style="color:rgb(38, 38, 38);">mcp</font>**<font style="color:rgb(38, 38, 38);">服务器是由ai应用（agent） 自主来决定怎么调用，什么时候调用，他在合适的时间就会调用我们的mcp服务器，来搞定一些额外的事情</font>
+
+<font style="color:rgb(38, 38, 38);">一般mcp服务器都放在本地 所以ai应用和mcp服务器通过stdio来交互，如果想要分享可以采用，npx的方式分享出去给别人使用</font>
+
+<font style="color:rgb(38, 38, 38);">mcp host === ai应用本身</font>
+
+<font style="color:rgb(38, 38, 38);">ai应用可以用来配置服务器，管理服务器  
 </font>
+
+模型都是不联网的，觉得联网是因为agent会去调用其他的工具
+
+agent就是一个主循环
+
+模型有方面缺陷：
+
+1.功能性缺陷（做不到，靠mcp和function Call)
+
+2.知识性缺陷（不知道，靠rag）
+
+## rules skills的使用
+
+Rules：始终存在的系统约束
+
+```javascript
+- 必须中文回答
+- 不允许删除文件
+- 使用 TS
+```
+
+特点：全局生效、持续存在、影响所有任务
+
+Skills：按需注入的任务能力
+
+```javascript
+React skill
+Debug skill
+SQL optimization skill
+```
+
+特点： 只有需要时才加载
+
+skills可以只有提示词，那就像一句说明书
+
+也可以有：
+
+- Prompt
+- Tool
+- Memory
+- Planner
+- Workflow
+
+| 文件名      | 作用说明                                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| prompt.md   | 定义调试代理的角色、行事原则、禁止规则，以及面向用户的简体中文固定交付物格式                                        |
+| tools.ts    | 定义调试调查手段枚举，并配置默认优先级：读源码、grep 检索、lint 检查、项目构建、浏览器网络 / 控制台等               |
+| workflow.ts | 标准化调试全流程分阶段检查清单：问题接入 (intake) → 问题复现 → 分层隔离 → 提出假设 → 验证假设 → 问题修复 → 回归验证 |
+| examples.md | 收录优质 / 劣质调试结论对照范本，提供可直接复用的 Markdown 标准化报告模板                                           |
+| memory.json | 约定会话结论的 JSON 数据结构与 Schema 规范，附带示例，用于沉淀记录已排除项、根因、关联涉及文件                      |
+| config.json | 配置技能元数据、项目入口文件映射关系、代理行为开关等全局配置项                                                      |

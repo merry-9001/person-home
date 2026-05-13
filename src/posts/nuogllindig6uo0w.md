@@ -29,7 +29,9 @@ categories: []
 
 ## 虚拟DOM
 
-vue依靠虚拟dom树生成真实的dom（他的优势在于修改时）
+vue依靠虚拟dom树生成真实的dom
+
+> 虚拟dom树的优势在于修改时
 
 虚拟dom本质上就是一个普通的JS对象，用于描述视图的界面结构
 
@@ -43,17 +45,17 @@ vue依靠虚拟dom树生成真实的dom（他的优势在于修改时）
 >
 > 模板(template)会被vue编译成一个render函数，render函数调用得到一个虚拟dom对象
 >
-> VNode === 虚拟dom === js对象
+> VNode（虚拟节点） === 虚拟dom === js对象
 
 在vue中，**每个组件**都有一个render函数，每个render函数都会返回一个虚拟dom树，这也就意味着每个组件都对应一棵虚拟DOM树
 
 后面如果组件更新了，他只管重新渲染他自己的虚拟dom树
 
-Vue在生成真实的DOM之前，会将我们的节点转换成VNode，而VNode组合在一起形成一颗树结构，就是虚拟DOM树（VDOM）
+Vue在生成真实的DOM之前，会将我们的节点转换成VNode，而VNode组合在一起形成一颗树结构，就是虚拟DOM树
 
 组件树：指的是一个一个组件所形成的树结构。
 
-虚拟 DOM 树：指的是某一个组件内部的虚拟 DOM 数据结构，并非整个应用的虚拟 DOM 结构。
+虚拟 DOM 树：指的是某一个组件内部的虚拟DOM数据结构，并非整个应用的虚拟DOM结构。
 
 ![](articles/nuogllindig6uo0w/1719381232663-6316d6df-277b-48d3-83d5-01b92854a5b1.png)
 
@@ -61,11 +63,11 @@ Vue在生成真实的DOM之前，会将我们的节点转换成VNode，而VNode�
 
 key：标识节点唯一性
 
-el：对应的实际元素
+el：对应的实际元素（页面中的）
 
 prop：属性信息(id,class,href);<font style="color:rgba(0, 0, 0, 0.85);">对于自定义组件，这里会包含传递给组件的所有 props（属性）值。</font>
 
-type：类型
+type：类型（是div或者是组件）
 
 children：子节点
 
@@ -146,20 +148,6 @@ render(h){
 }
 ```
 
-### render函数和setup函数的区别
-
-vue2可以通过render函数（内部调用h函数）生成虚拟dom
-
-vue3可以通过setup函数(内部都是使用h函数) 生成虚拟dom
-
-render函数主要用于在**组件实例化后**以编程方式构建和更新组件的视图
-
-> `<font style="color:rgb(0, 0, 0);">render</font>`<font style="color:rgba(0, 0, 0, 0.85);background-color:rgb(249, 250, 251);"> 函数里可以通过 </font>`<font style="color:rgb(0, 0, 0);">this</font>`<font style="color:rgba(0, 0, 0, 0.85);background-color:rgb(249, 250, 251);"> 访问 Vue 实例的 </font>`<font style="color:rgb(0, 0, 0);">data</font>`<font style="color:rgba(0, 0, 0, 0.85);background-color:rgb(249, 250, 251);">、</font>`<font style="color:rgb(0, 0, 0);">methods</font>`<font style="color:rgba(0, 0, 0, 0.85);background-color:rgb(249, 250, 251);"> 等属性。</font>
-
-setup函数则是在**组件实例化过程中**
-
-> `<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">setup</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);"> 函数在组件实例初始化之前执行，此时 </font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">this</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);"> 并不指向组件实例，所以不能通过 </font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">this</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);"> 来访问组件的属性和方法。</font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">setup</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);"> 函数接收两个参数：</font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">props</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);"> 和 </font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">context</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);">，</font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">props</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);"> 用于接收父组件传递的数据，</font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">context</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);"> 包含 </font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">attrs</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);">、</font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">slots</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);"> 和 </font>`<font style="color:rgb(0, 0, 0);background-color:rgb(249, 250, 251);">emit</font>`<font style="color:rgba(0, 0, 0, 0.85) !important;background-color:rgb(249, 250, 251);"> 等属性。</font>
-
 ### 为什么需要虚拟dom？
 
 js的计算效率要比创建和销毁dom的效率高很多，由于真实DOM的创建、更新、插入等操作会带来大量的性能损耗，从而就会极大的降低渲染效率。所以vue增加了虚拟dom，当页面结构发生变化的时候，先比较两棵树的虚拟dom，利用diff算法去计算出要更新的节点，然后再更新必要的节点。这样方式的效果高。
@@ -181,6 +169,168 @@ js的计算效率要比创建和销毁dom的效率高很多，由于真实DOM的
 这样一来，就保证了对真实dom达到最小的改动。
 
 ![](articles/nuogllindig6uo0w/1719381262844-0f568e56-1e2c-4eca-bbda-544c97080c39.png)
+
+### 代码 → 页面渲染流程
+
+#### 编译阶段
+
+.vue 文件  
+ ↓  
+compiler-sfc parse  
+ ↓  
+拆成 template / script setup / style  
+ ↓  
+compileScript  
+ ↓  
+把 <script setup> 编译成 setup()  
+ ↓  
+compileTemplate  
+ ↓  
+把 template 编译成 render()  
+ ↓  
+compileStyle  
+ ↓  
+处理 scoped，生成 scopeId 和改写 css  
+ ↓  
+合并成 JS 组件模块（得到的是组件对象）
+
+```javascript
+import { ref, computed } from "vue";
+
+const __sfc__ = {
+  __name: "Demo",
+  setup(__props, { expose }) {
+    expose();
+
+    const count = ref(0);
+    const double = computed(() => count.value * 2);
+
+    function inc() {
+      count.value++;
+    }
+
+    return {
+      count,
+      double,
+      inc,
+    };
+  },
+};
+
+function render(_ctx, _cache) {
+  return (
+    openBlock(),
+    createElementBlock(
+      "div",
+      {
+        class: "box",
+        onClick: _ctx.inc,
+      },
+      [
+        createElementVNode("span", null, toDisplayString(_ctx.count), 1),
+        createElementVNode("p", null, toDisplayString(_ctx.double), 1),
+      ],
+    )
+  );
+}
+
+__sfc__.render = render;
+__sfc__.__scopeId = "data-v-abc123";
+
+export default __sfc__;
+```
+
+#### 运行阶段
+
+**VNode 是组件的描述对象，组件实例是根据 VNode 创建出来的运行时对象。**
+
+---
+
+import 组件对象  
+ ↓  
+createApp(App).mount()  
+ ↓  
+createVNode(App)  
+ ↓  
+patch(挂载dom，发现是组件时，再递归加载.vue文件)  
+ ↓  
+mountComponent（创建虚拟Node）
+
+```javascript
+const vnode = createVNode(组件对象);
+
+vnode = {
+  type: MyComp,
+  props: null,
+  children: null,
+  component: null(实例),
+};
+```
+
+↓  
+createComponentInstance（创建组件实例）
+
+得到的实例才是这些字段
+
+```javascript
+const instance = (vnode)
+
+{
+  vnode,            // 当前组件对应的 vnode
+  type,             // 组件定义对象
+  props: {},
+  attrs: {},
+  slots: {},
+  setupState: {},
+  ctx: {},
+  proxy: null,
+  render: null,
+  subTree: null,
+  isMounted: false,
+  update: null
+}
+```
+
+↓  
+setupComponent
+
+> - 初始化 props
+> - 初始化 slots
+> - 执行 `setup()`
+> - 准备 render
+
+↓  
+执行 setup()，得到 setupState
+
+```javascript
+instance.setupState = setupResult
+
+{
+  count: RefImpl,
+  double: ComputedRefImpl,
+  inc: Function
+}
+```
+
+↓  
+绑定 render 到实例
+
+```javascript
+instance.render = component.render;
+```
+
+↓  
+创建 render effect
+
+查找数据变化，组件更新的数据  
+ ↓  
+执行 render()  
+ ↓  
+得到 subTree（VNode 树）  
+ ↓  
+patch subTree  
+ ↓  
+创建真实 DOM
 
 ### vue3怎么查看vnode 虚拟dom
 
@@ -222,9 +372,9 @@ Proxy 则是针对一整个对象的多种操作，包括属性的读取、赋�
 
 3.proxy效率更高
 
-两者递归拦截
+两者递归拦截的方式
 
-Object.defineProperty
+vue2：Object.defineProperty
 
 ```javascript
 const data = {
@@ -274,7 +424,7 @@ data.level1.level2.value = 200;
 
 > 每一层递归都会先读到子目录
 
-Proxy
+vue3：Proxy
 
 ```javascript
 const data = {
@@ -326,8 +476,6 @@ proxyData.level1.level2.value = 200;
 当对象被拦截后，针对对象的各种操作也就能够被拦截下来，从而让我们有机会做一些额外的事情。因此只要是被拦截了对象，就可以看作是一个响应式数据。
 
 在 Vue3 中，创建响应式数据的方式，有 ref 和 reactive 两种，这两个 API 的背后，就是就是针对对象添加拦截。
-
-在 JS 中，要实现数据拦截，要么是 Object.defineProperty，要么是 Proxy，而这两者都是针对对象来进行操作的。
 
 #### ref源码
 
@@ -555,7 +703,6 @@ function foo() {
 ```
 
 ```javascript
-// demo5
 var a = ref({ b: 1 });
 const k = a.value;
 const n = k.b;
@@ -837,18 +984,6 @@ setTimeout(() => {
   state.value.a = 4; // 会重新执行
 }, 1500);
 ```
-
-父组件传过来的props是响应式数据，里面的数据只是具体的数据值而已
-
-在vue3里面，只有他给你生成的代理是响应式数据，里面的属性并不是
-
-界面不会刷新
-
-![](articles/nuogllindig6uo0w/1725434025196-fd385483-75cf-4dc8-a0a8-92894d5520eb.png)
-
-界面会刷新
-
-![](articles/nuogllindig6uo0w/1725433990548-4278357c-988b-4e95-857a-366cae86e17b.png)
 
 > 被监控的函数
 >
@@ -1183,10 +1318,6 @@ function renderer(vnode, container) {
 }
 ```
 
-**响应式系统**
-
-总结：当模板编译成的渲染函数执行时，渲染函数内部用到的响应式数据会和渲染函数本身构成依赖关系，之后只要响应式数据发生变化，渲染函数就会重新执行。
-
 介绍一下 Vue3 内部的运行机制是怎样的？
 
 Vue3 是一个声明式的框架。声明式的好处在于，它直接描述结果，用户不需要关注过程。Vue.js 采用模板的方式来描述 UI，但它同样支持使用虚拟 DOM 来描述 UI。**虚拟 DOM 要比模板更加灵活，但模板要比虚拟 DOM 更加直观**。
@@ -1202,20 +1333,6 @@ Vue3 是一个声明式的框架。声明式的好处在于，它直接描述结
 谈谈 computed 的机制，缓存了什么？
 
 缓存的是上一次 getter 计算出来的值。
-
-为什么 computed 不支持异步？
-
-computed 属性在 Vue 中不支持异步操作的主要原因是设计上的理念和使用场景的考虑。computed 属性的初衷是用于计算并缓存一个基于响应式依赖的同步计算结果，当其依赖的响应式数据发生变化时，Vue 会自动重新计算 computed 的值，并将其缓存，以提高性能。
-
-computed 不支持异步的几个具体原因：
-
-缓存机制与同步计算：computed 属性的一个核心特性是缓存。当依赖的响应式数据没有变化时，computed 的计算结果会被缓存并直接返回，而不会重新执行计算。这种缓存机制是基于同步计算的，假如允许异步计算，那么在异步操作完成之前，computed 属性无法提供有效的返回值，这与它的同步缓存理念相违背。
-
-数据一致性：computed 属性通常用于模板中的绑定，它的计算结果需要在渲染期间是稳定且可用的。如果 computed 支持异步操作，渲染过程中的数据可能不一致，会导致模板渲染时无法确定使用什么数据，从而可能造成视图的闪烁或数据错误。
-
-调试与依赖追踪困难：如果 computed 属性是异步的，那么在调试和依赖追踪时就会变得非常复杂。异步操作的完成时间不确定，会使得依赖追踪的过程变得不直观，也难以预期。
-
-如果需要进行异步操作，通常推荐使用 watch 来实现。
 
 computer为什么不支持异步？
 
@@ -1245,13 +1362,19 @@ computer为什么不支持异步？
 
 ## 指令的本质
 
+指令的本质是patch过程中的插件
+
+自定义指令会运行你的方法
+
 v-if会放入三目运算符
 
 v-bind和使用$id绑定动态属性
 
-v-on去编写方法
+v-on会去编写方法
 
 ![](articles/nuogllindig6uo0w/1732871685182-63e862da-5f82-471f-89bf-32347ccabc06.png)
+
+> 指令会挂载到VNode实例的dirs属性上
 
 ## 插槽的本质
 
@@ -1315,6 +1438,8 @@ v-model的用法，总结起来就是两个场景：
 一个名为 update:modelValue 的事件，当本地 ref 的值发生变更时触发。
 
 ## keep-alive本质
+
+KeepAlive是一个组件实例缓存器：通过缓存 VNode 和组件实例，避免组件被卸载，并通过 DOM 移动实现组件的激活和停用。
 
 keep-alive
 
@@ -1540,7 +1665,7 @@ DebuggerEvent:
 
 ### 效率提升
 
-#### 静态提升
+#### 静态提升（ 减少 VNode 创建 编译时）
 
 提升静态节点
 
@@ -1575,7 +1700,7 @@ function render(){
 }
 ```
 
-#### 预字符串化
+#### 预字符串化（ 减少 VNode 创建 编译时）
 
 ```html
 <div class="menu-bar-container">
@@ -1605,6 +1730,8 @@ const _hoisted_2 = _createStaticVNode("<div class=/"logo/"><h1>logo</h1></div><u
 
 道理如上，还是因为静态节点数据不会改变，所以可以把多个静态节点合并成为一个静态节点
 
+直接 innerHTML 去展示
+
 #### 缓存事件处理函数
 
 ```html
@@ -1629,9 +1756,9 @@ render(ctx, _cache){
 }
 ```
 
-同理，因为click事件的内容是不变，所以也可以做缓存
+因为click事件的内容是不变，所以也可以做缓存
 
-#### Block Tree
+#### Block Tree（ 减少 diff 范围，编译时标记，运行时使用）
 
 vue2在对比新旧树的时候，并不知道哪些节点是静态的，哪些是动态的，因此只能一层一层比较，这就浪费了大部分时间在比对静态节点上
 
@@ -1654,7 +1781,7 @@ vue2在对比新旧树的时候，并不知道哪些节点是静态的，哪些�
 
 他会把所有的动态节点变成一个block数组，到时候更新的时候只去对比block数组来进行更新，当然如果数组不稳定增加或者减少的时候，就会拆开blcok（递归），进行一块一块的block进行对比
 
-#### PatchFlag
+#### PatchFlag（ 减少节点内部 diff ，编译时标记，运行时使用）
 
 vue2在对比每一个节点时，并不知道这个节点哪些相关信息会发生变化，因此只能将所有信息依次比对
 
