@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import homeData from '../../data/home.json'
+import SkillIcon from './SkillIcon.vue'
 
 const sectionRef = ref<HTMLElement | null>(null)
 const visible = ref(false)
@@ -36,7 +37,7 @@ const skills = homeData.skills
           :title="skill.name"
           :aria-label="skill.name"
         >
-          <span class="skill-icon">{{ skill.icon }}</span>
+          <SkillIcon class="skill-icon" :slug="skill.icon" :label="skill.name" />
         </div>
       </div>
     </div>
@@ -94,8 +95,9 @@ const skills = homeData.skills
 }
 
 .skill-icon {
-  font-size: 2rem;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .skill-item {
@@ -133,9 +135,6 @@ const skills = homeData.skills
     height: 80px;
   }
 
-  .skill-icon {
-    font-size: 1.8rem;
-  }
 }
 
 @media (max-width: 768px) {
@@ -160,8 +159,5 @@ const skills = homeData.skills
     height: 72px;
   }
 
-  .skill-icon {
-    font-size: 1.6rem;
-  }
 }
 </style>

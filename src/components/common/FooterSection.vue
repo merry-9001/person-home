@@ -2,15 +2,17 @@
   <footer class="footer">
     <div class="container">
       <div class="footer-top">
-        <RouterLink to="/" class="logo">YBY<span>.</span></RouterLink>
+        <RouterLink to="/" class="logo">MERRY<span>.</span></RouterLink>
         <nav class="footer-links">
           <RouterLink to="/">首页</RouterLink>
           <RouterLink to="/blog">博客</RouterLink>
+          <RouterLink to="/demos">Demo</RouterLink>
+          <RouterLink to="/hangzhou">杭州</RouterLink>
         </nav>
       </div>
       <div class="divider" />
       <div class="footer-bottom">
-        <p>&copy; {{ new Date().getFullYear() }} 云边缘. All rights reserved.</p>
+        <p>&copy; {{ new Date().getFullYear() }} MERRY. All rights reserved.</p>
         <a
           class="icp-link"
           href="https://beian.miit.gov.cn/"

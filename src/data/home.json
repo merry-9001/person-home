@@ -1,17 +1,17 @@
 {
   "hero": {
     "greeting": "你好，我是",
-    "name": "云边缘",
-    "title": "全栈开发者 & 创意工程师",
-    "description": "热爱用代码构建优雅的数字体验，专注于现代 Web 技术与用户体验设计。"
+    "name": "YU",
+    "title": "AI前端(全栈)开发者",
+    "description": "用代码构建优雅的数字体验，专注于现代 Web 技术与用户体验设计。"
   },
   "about": {
     "tag": "关于我",
     "title": "了解我的故事",
     "paragraphs": [
-      "我是一名充满热情的全栈开发者，拥有多年的软件开发经验。从前端到后端，从移动应用到云服务，我享受将创意转化为现实的每一个过程。",
-      "我相信优秀的代码不仅仅是功能的实现，更是艺术的表达。我始终追求简洁、高效、优雅的解决方案，同时注重用户体验和代码质量。",
-      "在工作之余，我喜欢探索新技术、参与开源项目、阅读技术博客，并热衷于与社区分享自己的心得和经验。"
+      "我主要深耕前端工程，熟悉 Vue / React 生态与现代构建体系，从组件设计、性能优化到工程化落地都有完整实践经验，也乐于把复杂交互做成清晰、好用的界面。",
+      "与此同时，我会用 AI 工具提升研发效率，理解 MCP、RAG 等应用范式，并能把大模型能力融入实际产品；后端方面也能独立搭建 Node.js 服务、接口与数据层，支撑前后端协同交付。",
+      "我相信好的前端不只是「能跑起来」，而是可维护、可扩展、体验到位。工作之余，我持续关注框架演进与 AI 应用实践，并通过博客与项目沉淀自己的思考。"
     ],
     "stats": [
       { "value": "5+", "label": "年经验" },
@@ -22,20 +22,26 @@
   },
   "skills": {
     "tag": "技能",
-    "title": "技术栈一览",
+    "title": "技术栈与工程能力",
     "items": [
-      { "name": "Vue.js", "icon": "💚" },
-      { "name": "React", "icon": "⚛️" },
-      { "name": "TypeScript", "icon": "🔷" },
-      { "name": "CSS / Tailwind", "icon": "🎭" },
-      { "name": "Node.js", "icon": "🟢" },
-      { "name": "Python", "icon": "🐍" },
-      { "name": "Go", "icon": "🔵" },
-      { "name": "PostgreSQL", "icon": "🐘" },
-      { "name": "Docker", "icon": "🐳" },
-      { "name": "Git", "icon": "📦" },
-      { "name": "Linux", "icon": "🐧" },
-      { "name": "CI/CD", "icon": "🔄" }
+      { "name": "JavaScript", "icon": "javascript" },
+      { "name": "Vue 2 / Vue ", "icon": "vue" },
+      { "name": "React 生态", "icon": "react" },
+      { "name": "Webpack", "icon": "webpack" },
+      { "name": "Vite", "icon": "vite" },
+      { "name": "TypeScript", "icon": "typescript" },
+      { "name": "Node.js", "icon": "nodejs" },
+      { "name": "Express", "icon": "express" },
+      { "name": "NestJS", "icon": "nestjs" },
+      { "name": "Nuxt", "icon": "nuxt" },
+      { "name": "MySQL", "icon": "mysql" },
+      { "name": "Redis", "icon": "redis" },
+      { "name": "Linux", "icon": "linux" },
+      { "name": "Docker", "icon": "docker" },
+      { "name": "CI/CD", "icon": "github-actions" },
+      { "name": "AI 编程 · MCP / RAG", "icon": "mcp" },
+      { "name": "UniApp 跨端", "icon": "uniapp" },
+      { "name": "Electron 桌面端", "icon": "electron" }
     ]
   },
   "projects": {

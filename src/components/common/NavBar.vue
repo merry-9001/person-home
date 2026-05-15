@@ -26,7 +26,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 <template>
   <header class="navbar" :class="{ scrolled }">
     <div class="nav-inner">
-      <RouterLink to="/" class="logo">YBY<span>.</span></RouterLink>
+      <RouterLink to="/" class="logo">MERRY<span>.</span></RouterLink>
       <div class="nav-right">
         <nav class="nav-links" :class="{ open: mobileOpen }">
           <RouterLink to="/" @click="closeMenu">首页</RouterLink>

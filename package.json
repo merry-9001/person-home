@@ -11,6 +11,7 @@
   "dependencies": {
     "@sentry/vue": "^10.50.0",
     "markdown-it": "^14.1.1",
+    "simple-icons": "^16.19.0",
     "vue": "^3.5.25",
     "vue-router": "^5.0.3"
   },
@@ -27,11 +28,13 @@
     "onlyPublic": false
   },
   "devDependencies": {
+    "@iconify-json/logos": "^1.2.11",
     "@sentry/vite-plugin": "^5.2.0",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^24.10.1",
     "@vitejs/plugin-vue": "^6.0.2",
     "@vue/tsconfig": "^0.8.1",
+    "devicon": "2.15.1",
     "ejs": "^5.0.1",
     "hexo-front-matter": "^5.0.0",
     "html-entities": "^1.2.1",
