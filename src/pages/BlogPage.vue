@@ -107,20 +107,13 @@ function goPost(slug: string) {
   router.push({ name: 'blog-post', params: { slug } })
 }
 
-const BLOG_POST_TAG = '博客文章'
-
 const normalizedKeyword = computed(() => searchKeyword.value.trim().toLowerCase())
-
-const blogPostsOnly = computed(() =>
-  posts.value.filter((post) => post.tags.includes(BLOG_POST_TAG)),
-)
 
 const filteredPosts = computed(() => {
   const keyword = normalizedKeyword.value
-  const list = blogPostsOnly.value
-  if (!keyword) return list
+  if (!keyword) return posts.value
 
-  return list.filter((post) => {
+  return posts.value.filter((post) => {
     const searchText = [post.title, post.summary, post.date, ...post.tags].join(' ').toLowerCase()
     return searchText.includes(keyword)
   })
@@ -181,9 +174,6 @@ const filteredPosts = computed(() => {
         </div>
         <div v-if="posts.length === 0" class="empty">
           <p>暂无文章，敬请期待...</p>
-        </div>
-        <div v-else-if="blogPostsOnly.length === 0" class="empty">
-          <p>暂无带「博客文章」标签的文章</p>
         </div>
         <div v-else-if="filteredPosts.length === 0" class="empty">
           <p>没有找到匹配的文章</p>
