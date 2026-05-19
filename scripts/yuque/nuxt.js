@@ -99,10 +99,6 @@ const formatMarkdown = (() => {
  */
 module.exports = async function (post) {
   const tags = post.tags?.map((item) => item.title) || []
-  if (!tags.includes('博客文章')) {
-    return null
-  }
-
   // matter 解析
   const parseRet = parseMatter(post.body)
   const { body, ...data } = parseRet

@@ -66,9 +66,6 @@ function formatLink(text) {
 
 module.exports = async function (post) {
   let text = await HexoAdapter(post)
-  if (text == null) {
-    return null
-  }
   if (!/(?<=\[.*\]\()http.+\.(jpg|gif|png|webp).*(?=\))/.test(text)) {
     return text
   }
