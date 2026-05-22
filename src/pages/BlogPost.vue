@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MarkdownIt from 'markdown-it'
+import { formatBlogDate } from '../utils/formatDate'
 
 const route = useRoute()
 const router = useRouter()
@@ -21,6 +22,23 @@ const notFound = ref(false)
 const tocItems = ref<Array<{ id: string; text: string; level: number }>>([])
 
 const slug = computed(() => route.params.slug as string)
+
+function stripHtml(raw: string) {
+  return raw
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .trim()
+}
+
+function plainTextFromInline(inlineToken: { type: string; content: string } | undefined) {
+  if (!inlineToken || inlineToken.type !== 'inline') return ''
+  return stripHtml(inlineToken.content.trim())
+}
 
 function slugifyHeading(text: string) {
   return text
@@ -43,7 +61,7 @@ function renderMarkdownWithToc(content: string) {
 
     const level = Number(token.tag.replace('h', ''))
     const inlineToken = tokens[i + 1]
-    const text = inlineToken?.type === 'inline' ? inlineToken.content.trim() : ''
+    const text = plainTextFromInline(inlineToken)
     if (!text) continue
 
     const base = slugifyHeading(text) || `section-${nextToc.length + 1}`
@@ -171,7 +189,7 @@ function goBack() {
 
       <template v-if="!notFound">
         <header class="post-header">
-          <div class="post-date">{{ date }}</div>
+          <div class="post-date">{{ formatBlogDate(date) }}</div>
           <h1>{{ title }}</h1>
           <div class="post-tags">
             <span v-for="tag in tags" :key="tag" class="tag-pill">{{ tag }}</span>

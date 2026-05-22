@@ -70,11 +70,10 @@
   "contact": {
     "tag": "联系",
     "title": "与我取得联系",
-    "subtitle": "无论是项目合作、技术交流还是随便聊聊，都欢迎联系我",
     "items": [
-      { "icon": "📧", "label": "邮箱", "value": "hello@example.com", "href": "mailto:hello@example.com" },
-      { "icon": "🐙", "label": "GitHub", "value": "github.com/yourname", "href": "https://github.com" },
-      { "icon": "💬", "label": "微信", "value": "your_wechat_id", "href": "#" }
+      { "icon": "📧", "label": "邮箱", "value": "739211562@qq.com", "href": "mailto:739211562@qq.com" },
+      { "icon": "🐙", "label": "GitHub", "value": "github.com/merry-9001", "href": "https://github.com/merry-9001" },
+      { "icon": "💬", "label": "微信", "value": "Merry_9001", "href": "#" }
     ]
   }
 }

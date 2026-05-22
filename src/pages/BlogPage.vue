@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { formatBlogDate } from '../utils/formatDate'
 
 interface PostMeta {
   slug: string
@@ -163,7 +164,7 @@ const filteredPosts = computed(() => {
             :style="{ transitionDelay: `${i * 0.1 + 0.2}s` }"
             @click="goPost(post.slug)"
           >
-            <div class="post-date">{{ post.date }}</div>
+            <div class="post-date">{{ formatBlogDate(post.date) }}</div>
             <h2>{{ post.title }}</h2>
             <p>{{ post.summary }}</p>
             <div class="post-tags">

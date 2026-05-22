@@ -26,7 +26,6 @@ const contact = homeData.contact
       <div class="section-header">
         <span class="tag">{{ contact.tag }}</span>
         <h2>{{ contact.title }}</h2>
-        <p class="subtitle">{{ contact.subtitle }}</p>
       </div>
       <div class="contact-grid">
         <a
@@ -87,12 +86,6 @@ const contact = homeData.contact
 .section-header h2 {
   font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.subtitle {
-  color: var(--text-muted);
-  font-size: 1.05rem;
 }
 
 .contact-grid {

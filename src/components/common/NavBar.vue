@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useTheme } from '../../composables/useTheme'
 
 const { theme, toggleTheme } = useTheme()
+const route = useRoute()
 
 const scrolled = ref(false)
 const mobileOpen = ref(false)
+
+/** 顶部有大图/深色 Hero 的页面，未滚动时用浅色导航字 */
+const onDarkHero = computed(
+  () => !scrolled.value && theme.value === 'light' && route.name === 'hangzhou'
+)
 
 function onScroll() {
   scrolled.value = window.scrollY > 40
@@ -19,12 +26,15 @@ function closeMenu() {
   mobileOpen.value = false
 }
 
-onMounted(() => window.addEventListener('scroll', onScroll))
+onMounted(() => {
+  onScroll()
+  window.addEventListener('scroll', onScroll, { passive: true })
+})
 onUnmounted(() => window.removeEventListener('scroll', onScroll))
 </script>
 
 <template>
-  <header class="navbar" :class="{ scrolled }">
+  <header class="navbar" :class="{ scrolled, 'on-dark-hero': onDarkHero }">
     <div class="nav-inner">
       <RouterLink to="/" class="logo">MERRY<span>.</span></RouterLink>
       <div class="nav-right">
@@ -68,14 +78,32 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   width: 100%;
   z-index: 1000;
   padding: 20px 0;
-  transition: all 0.35s ease;
+  background: transparent;
+  transition: padding 0.35s ease, background-color 0.35s ease;
+}
+
+.navbar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--nav-divider);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
 }
 
 .navbar.scrolled {
   padding: 12px 0;
   background: var(--nav-bg);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.navbar.scrolled::after {
+  opacity: 1;
 }
 
 .nav-inner {
@@ -145,9 +173,9 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 
 .nav-links a {
-  color: var(--text-secondary);
+  color: var(--nav-link);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   position: relative;
   transition: color 0.3s;
 }
@@ -165,7 +193,30 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 
 .nav-links a:hover {
-  color: var(--text-primary);
+  color: var(--nav-link-hover);
+}
+
+.navbar.on-dark-hero .logo {
+  color: #fff !important;
+}
+
+.navbar.on-dark-hero .nav-links a {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.navbar.on-dark-hero .nav-links a:hover {
+  color: #fff;
+}
+
+.navbar.on-dark-hero .theme-toggle {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+
+.navbar.on-dark-hero .menu-btn span {
+  background: #fff;
 }
 
 .nav-links a:hover::after {
