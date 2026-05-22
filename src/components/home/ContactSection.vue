@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import homeData from '../../data/home.json'
+import ContactIcon from './ContactIcon.vue'
 
 const sectionRef = ref<HTMLElement | null>(null)
 const visible = ref(false)
@@ -37,7 +38,7 @@ const contact = homeData.contact
           target="_blank"
           rel="noopener"
         >
-          <span class="contact-icon">{{ c.icon }}</span>
+          <ContactIcon class="contact-icon" :slug="c.icon" :label="c.label" />
           <h3>{{ c.label }}</h3>
           <p>{{ c.value }}</p>
         </a>
@@ -119,9 +120,7 @@ const contact = homeData.contact
 }
 
 .contact-icon {
-  font-size: 2.4rem;
   display: block;
-  margin-bottom: 16px;
 }
 
 .contact-card h3 {

@@ -71,9 +71,9 @@
     "tag": "联系",
     "title": "与我取得联系",
     "items": [
-      { "icon": "📧", "label": "邮箱", "value": "739211562@qq.com", "href": "mailto:739211562@qq.com" },
-      { "icon": "🐙", "label": "GitHub", "value": "github.com/merry-9001", "href": "https://github.com/merry-9001" },
-      { "icon": "💬", "label": "微信", "value": "Merry_9001", "href": "#" }
+      { "icon": "email", "label": "邮箱", "value": "739211562@qq.com", "href": "mailto:739211562@qq.com" },
+      { "icon": "github", "label": "GitHub", "value": "github.com/merry-9001", "href": "https://github.com/merry-9001" },
+      { "icon": "wechat", "label": "微信", "value": "Merry_9001", "href": "#" }
     ]
   }
 }
